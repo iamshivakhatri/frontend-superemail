@@ -21,7 +21,7 @@ const Dashboard = (props: Props) => {
   return (
 
     <div>
-        ashboard
+        Dashboard
         <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
             {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
         </Button>

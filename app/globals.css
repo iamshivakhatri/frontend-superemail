@@ -6,10 +6,23 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-html, 
+/* html, 
 body,
 :root{
   height: 100%;
+} */
+
+/* styles/globals.css */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+#__next {
+  height: 100%;
+  display: flex; /* Makes sure the child components can take full height */
 }
 
 @layer utilities {
