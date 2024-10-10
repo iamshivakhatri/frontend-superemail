@@ -17,7 +17,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         isMobileMenuOpen={isMobileMenuOpen}
         setIsMobileMenuOpen={setIsMobileMenuOpen}
       />
-      <main className="flex-1 p-6 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto">
         {children} {/* This is where the page content will be rendered */}
       </main>
     </div>

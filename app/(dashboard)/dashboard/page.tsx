@@ -4,11 +4,11 @@ import { Button } from '@/components/ui/button'
 import React from 'react'
 import { useState } from 'react'
 import { ArrowUpRight, Bell, Calendar, ChevronDown, ChevronRight, CreditCard, FileText, HelpCircle, LayoutDashboard, Mail, Menu, MessageSquare, Moon, MoreVertical, Search, Settings, Sun, Users, Plus } from 'lucide-react'
-
+import Dashboard  from './components/dashboard-main';
 
 type Props = {}
 
-const Dashboard = (props: Props) => {
+const DashboardMain = (props: Props) => {
     const [darkMode, setDarkMode] = useState(false)
   const [trackingIds, setTrackingIds] = useState<string[]>([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -19,15 +19,12 @@ const Dashboard = (props: Props) => {
     document.documentElement.classList.toggle('dark')
   }
   return (
+    <>
+    <Dashboard />
+    </>
 
-    <div>
-        Dashboard
-        <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
-            {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-        </Button>
-
-    </div>
+   
   )
 }
 
-export default Dashboard
+export default DashboardMain

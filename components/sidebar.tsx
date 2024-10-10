@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { LayoutDashboard, MessageSquare, CreditCard, FileText, Users, Mail, Settings, ChevronDown, ChevronRight, MoreVertical, Sun, Moon, ChevronLeft, User } from 'lucide-react'
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+// import { useRouter } from 'next/navigation'; // Import useRouter
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { LayoutDashboard, MessageSquare, CreditCard, FileText, Mail, Settings, ChevronDown, ChevronLeft, MoreVertical, User } from 'lucide-react';
+import { usePathname } from "next/navigation";
+
 
 interface SidebarProps {
   darkMode: boolean;
@@ -19,9 +22,25 @@ interface UserInfo {
   picture: string;
 }
 
+// Define the menu items as an array of objects
+const menuItems = [
+  { href: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="mr-2 h-4 w-4" /> },
+  { href: '/discuss', label: 'Discuss', icon: <MessageSquare className="mr-2 h-4 w-4" />, hasChevron: true },
+  { href: '/subscription', label: 'Subscription', icon: <CreditCard className="mr-2 h-4 w-4" /> },
+  { href: '/contact', label: 'Contact', icon: <FileText className="mr-2 h-4 w-4" /> },
+  { href: '/email-templates', label: 'Email Templates', icon: <Mail className="mr-2 h-4 w-4" /> },
+  { href: '/campaign', label: 'Email Campaigns', icon: null, highlight: true },
+  { href: '/settings', label: 'Settings', icon: <Settings className="mr-2 h-4 w-4" /> },
+];
+
 const Sidebar: React.FC<SidebarProps> = ({ darkMode, toggleDarkMode, className, isMobileMenuOpen, setIsMobileMenuOpen }) => {
+//   const router = useRouter(); // Initialize useRouter
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const router = usePathname();
+  console.log(router);
+
+
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -39,7 +58,7 @@ const Sidebar: React.FC<SidebarProps> = ({ darkMode, toggleDarkMode, className, 
             },
             body: JSON.stringify({ tokens }),
           });
-          
+
           console.log('Response status:', response.status); // Debug log
 
           if (response.ok) {
@@ -64,6 +83,9 @@ const Sidebar: React.FC<SidebarProps> = ({ darkMode, toggleDarkMode, className, 
     fetchUserInfo();
   }, []);
 
+  // Extract the current route from the router
+//   const currentRoute = router.asPath.split('/').pop();
+
   return (
     <aside className={`bg-white dark:bg-gray-800 flex flex-col transition-all duration-300 ease-in-out fixed inset-y-0 left-0 z-50 w-64 lg:w-64 transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:relative lg:translate-x-0 ${className}`}>
       <div className="flex-1 overflow-y-auto p-6">
@@ -81,58 +103,22 @@ const Sidebar: React.FC<SidebarProps> = ({ darkMode, toggleDarkMode, className, 
         </div>
         <Input placeholder="Search" className="mb-6" />
         <nav className="space-y-1">
-          <Link href="/dashboard">
-            <Button variant="ghost" className="w-full justify-start hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-              <LayoutDashboard className="mr-2 h-4 w-4" />
-              Dashboard
-            </Button>
-          </Link>
-          <Button variant="ghost" className="w-full justify-start hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-            <MessageSquare className="mr-2 h-4 w-4" />
-            Discuss
-            <ChevronDown className="ml-auto h-4 w-4" />
-          </Button>
-          <Button variant="ghost" className="w-full justify-start hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-            <CreditCard className="mr-2 h-4 w-4" />
-            Subscription
-          </Button>
-          <Button variant="ghost" className="w-full justify-start hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-            <FileText className="mr-2 h-4 w-4" />
-            Contact
-          </Button>
-          <Button variant="ghost" className="w-full justify-start hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-            <Users className="mr-2 h-4 w-4" />
-            CRM
-            <ChevronDown className="ml-auto h-4 w-4" />
-          </Button>
-          <Button variant="ghost" className="w-full justify-start hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-            <CreditCard className="mr-2 h-4 w-4" />
-            Sales
-            <ChevronDown className="ml-auto h-4 w-4" />
-          </Button>
-          <Button variant="ghost" className="w-full justify-start hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-            <FileText className="mr-2 h-4 w-4" />
-            Invoice
-          </Button>
-          <Button variant="ghost" className="w-full justify-start bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-800 transition-colors duration-200">
-            <Mail className="mr-2 h-4 w-4" />
-            Email Templates
-            <ChevronRight className="ml-auto h-4 w-4" />
-          </Button>
-          <Link href="/campaign">
-            <Button variant="ghost" className="w-full justify-start ml-4 text-purple-600 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900 transition-colors duration-200">
-              Email Campaigns
-            </Button>
-          </Link>
-          <Link href="/email-template">
-            <Button variant="ghost" className="w-full justify-start ml-4 text-purple-600 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900 transition-colors duration-200">
-              Email Templates
-            </Button>
-          </Link>
-          <Button variant="ghost" className="w-full justify-start hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-            <Settings className="mr-2 h-4 w-4" />
-            Settings
-          </Button>
+          {menuItems.map((item, index) => {
+            // Set highlight based on the current route
+            const isActive = item.href === router;
+            return (
+              <Link key={index} href={item.href}>
+                <Button
+                  variant="ghost"
+                  className={`w-full justify-start ${isActive ? 'bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300' : 'hover:bg-gray-100 dark:hover:bg-gray-700'} transition-colors duration-200`}
+                >
+                  {item.icon}
+                  {item.label}
+                  {item.hasChevron && <ChevronDown className="ml-auto h-4 w-4" />}
+                </Button>
+              </Link>
+            );
+          })}
         </nav>
       </div>
       <div className="p-6 border-t border-gray-200 dark:border-gray-700">
@@ -160,7 +146,7 @@ const Sidebar: React.FC<SidebarProps> = ({ darkMode, toggleDarkMode, className, 
         </div>
       </div>
     </aside>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;
