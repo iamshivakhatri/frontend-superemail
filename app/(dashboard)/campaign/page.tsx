@@ -1,10 +1,11 @@
 import React from 'react'
+import CampaignDashboard from './components/campaign'
 
 type Props = {}
 
 const Campaign = (props: Props) => {
   return (
-    <div>Campaign</div>
+    <CampaignDashboard />
   )
 }
 
