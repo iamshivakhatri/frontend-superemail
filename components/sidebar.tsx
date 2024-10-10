@@ -26,7 +26,7 @@ interface UserInfo {
 const menuItems = [
   { href: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="mr-2 h-4 w-4" /> },
 //   { href: '/discuss', label: 'Discuss', icon: <MessageSquare className="mr-2 h-4 w-4" />, hasChevron: true },
-  { href: '/discuss', label: 'Discuss', icon: <MessageSquare className="mr-2 h-4 w-4" /> },
+//   { href: '/discuss', label: 'Discuss', icon: <MessageSquare className="mr-2 h-4 w-4" /> },
 
 
   { href: '/subscription', label: 'Subscription', icon: <CreditCard className="mr-2 h-4 w-4" /> },
