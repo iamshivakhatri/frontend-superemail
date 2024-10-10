@@ -25,7 +25,10 @@ interface UserInfo {
 // Define the menu items as an array of objects
 const menuItems = [
   { href: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="mr-2 h-4 w-4" /> },
-  { href: '/discuss', label: 'Discuss', icon: <MessageSquare className="mr-2 h-4 w-4" />, hasChevron: true },
+//   { href: '/discuss', label: 'Discuss', icon: <MessageSquare className="mr-2 h-4 w-4" />, hasChevron: true },
+  { href: '/discuss', label: 'Discuss', icon: <MessageSquare className="mr-2 h-4 w-4" /> },
+
+
   { href: '/subscription', label: 'Subscription', icon: <CreditCard className="mr-2 h-4 w-4" /> },
   { href: '/contact', label: 'Contact', icon: <FileText className="mr-2 h-4 w-4" /> },
   { href: '/email-templates', label: 'Email Templates', icon: <Mail className="mr-2 h-4 w-4" /> },
@@ -114,7 +117,7 @@ const Sidebar: React.FC<SidebarProps> = ({ darkMode, toggleDarkMode, className, 
                 >
                   {item.icon}
                   {item.label}
-                  {item.hasChevron && <ChevronDown className="ml-auto h-4 w-4" />}
+                  {/* {item.hasChevron? && <ChevronDown className="ml-auto h-4 w-4" />} */}
                 </Button>
               </Link>
             );
