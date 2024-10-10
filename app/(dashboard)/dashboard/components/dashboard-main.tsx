@@ -37,14 +37,14 @@ interface CustomTooltipProps extends TooltipProps<ValueType, NameType> {
 }
 
 const emailData = [
-  { year: 2014, clickThrough: 40, openRate: 30 },
-  { year: 2015, clickThrough: 55, openRate: 40 },
-  { year: 2016, clickThrough: 60, openRate: 25 },
-  { year: 2017, clickThrough: 75, openRate: 45 },
-  { year: 2018, clickThrough: 58, openRate: 38 },
-  { year: 2019, clickThrough: 62, openRate: 42 },
-  { year: 2020, clickThrough: 60, openRate: 40 },
-  { year: 2021, clickThrough: 58, openRate: 45 },
+//   { year: 2014, clickThrough: 40, openRate: 30 },
+//   { year: 2015, clickThrough: 55, openRate: 40 },
+//   { year: 2016, clickThrough: 60, openRate: 25 },
+//   { year: 2017, clickThrough: 75, openRate: 45 },
+//   { year: 2018, clickThrough: 58, openRate: 38 },
+//   { year: 2019, clickThrough: 62, openRate: 42 },
+//   { year: 2020, clickThrough: 60, openRate: 40 },
+//   { year: 2021, clickThrough: 58, openRate: 45 },
   { year: 2022, clickThrough: 52, openRate: 48 },
 ]
 
@@ -397,22 +397,7 @@ const Dashboard = () => {
         </main>
       </div>
 
-      {/* Mobile sidebar overlay */}
-      {isMobileMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
-        ></div>
-      )}
 
-      {/* Mobile sidebar */}
-      <Sidebar 
-        darkMode={darkMode} 
-        toggleDarkMode={toggleDarkMode} 
-        className="lg:hidden"
-        isMobileMenuOpen={isMobileMenuOpen}
-        setIsMobileMenuOpen={setIsMobileMenuOpen}
-      />
     </div>
   )
 }

@@ -17,6 +17,8 @@ import { useAuth } from '@/context/auth-provider'
 import axios from 'axios';
 import CampaignCard from '@/components/campaign-card';
 
+import  CreateCampaignModal from "@/components/modals/create-campaign-modal";
+
 interface AudienceFile {
   id: string;
   audienceName: string[];
@@ -46,6 +48,7 @@ const CampaignDashboard = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { userId } = useAuth(); // Get userId from your auth hook
+  const [isOpen, setIsOpen] = useState(false);
 
   // Handle dark mode toggle
   const toggleDarkMode = () => {
@@ -107,8 +110,14 @@ const CampaignDashboard = () => {
     );
   }
 
+  const handleClose = () => {
+    console.log('Close modal');
+    setIsOpen(false)
+  }
+
   return (
     <div className={`flex flex-col h-screen ${darkMode ? 'dark' : ''}`}>
+      <CreateCampaignModal  isOpen={isOpen} onClose={handleClose} />
       <header className="bg-white dark:bg-gray-800 shadow-sm lg:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(true)}>
@@ -159,11 +168,11 @@ const CampaignDashboard = () => {
                     <h2 className="text-2xl font-bold mb-2">Welcome to Your Campaign Dashboard!</h2>
                     <p className="text-lg">Track and optimize your email campaigns with ease.</p>
                   </div>
-                  <Link href="/create-campaign">
-                    <Button variant="secondary" size="lg" className="w-full lg:w-auto">
+                  {/* <Link href="/create-campaign"> */}
+                    <Button variant="secondary" size="lg" className="w-full lg:w-auto" onClick={ ()=>{setIsOpen(true)}}>
                       <Plus className="mr-2 h-4 w-4" /> Create New Campaign
                     </Button>
-                  </Link>
+                  {/* </Link> */}
                 </div>
               </CardContent>
             </Card>
