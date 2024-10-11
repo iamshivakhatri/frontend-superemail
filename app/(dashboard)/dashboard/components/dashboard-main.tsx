@@ -10,20 +10,79 @@ import axios from 'axios';
 import StatCards from './stat-card';
 import EmailPerformanceTrends from './email-performance-trends'
 import DevicePerformance from './device-performance';
+import { Campaign } from '@prisma/client';
+import { set } from 'date-fns';
+
 
 const Dashboard = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
-  const [campaigns, setCampaigns] = useState([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]); // Use the imported Campaign type
+  const [campaignType, setCampaignType] = useState('all');
+  const [dateRange, setDateRange] = useState('7'); // Default to 'Last 7 days'
+  const [updatedCampaigns, setUpdatedCampaigns] = useState<Campaign[]>([]); // Use the imported Campaign type
+
+
 
   const userId = "6706128e62c37fb8a639a659";
+
+  // Handle campaignType change
+  const handleCampaignTypeChange = (value: string) => {
+    setCampaignType(value);
+    console.log('Campaign type:', value);
+    console.log('Campaigns:', campaigns);
+    
+    const updatedCampaignsValue = campaigns.filter((campaign) => {
+      console.log('Current campaign:', campaign); // Log each campaign
+      if (value === 'all') {
+        console.log('All campaigns:', campaigns);
+        return true;
+      }
+      console.log("this is campaign type",campaign.campaignType);
+      return campaign.campaignType === value; // Compare against the new value
+    });
+    
+    setUpdatedCampaigns(updatedCampaignsValue); // Update the campaigns state with the filtered campaigns
+  };
+  
+
+  // Handle dateRange change
+  // Handle dateRange change
+    const handleDateRangeChange = (value: string) => {
+      setDateRange(value);
+      console.log('Date range:', value);
+      
+      const currentDate = new Date();
+      const updatedCampaignsValue = campaigns.filter((campaign) => {
+          const campaignDate = new Date(campaign.createdAt);
+          let isInRange = false;
+
+          switch (value) {
+              case '7':
+                  isInRange = (currentDate.getTime() - campaignDate.getTime()) <= 7 * 24 * 60 * 60 * 1000; // Last 7 days
+                  break;
+              case '30':
+                  isInRange = (currentDate.getTime() - campaignDate.getTime()) <= 30 * 24 * 60 * 60 * 1000; // Last 30 days
+                  break;
+              case 'all':
+              default:
+                  isInRange = true; // If 'all', include all campaigns
+                  break;
+          }
+          return isInRange; // Return true if the campaign is in the selected date range
+      });
+
+      setUpdatedCampaigns(updatedCampaignsValue); // Update the campaigns state with the filtered campaigns
+    };
+
 
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
         const response = await axios.get(`/api/campaign?userId=${userId}`);
         setCampaigns(response.data);
+        setUpdatedCampaigns(response.data);
         console.log('Fetched campaigns:', response.data);
       } catch (error) {
         console.error('Error fetching campaigns:', error);
@@ -102,7 +161,7 @@ const Dashboard = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <Select>
+            <Select onValueChange={handleCampaignTypeChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Campaign type" />
                 </SelectTrigger>
@@ -113,7 +172,7 @@ const Dashboard = () => {
                   <SelectItem value="transactional">Transactional</SelectItem>
                 </SelectContent>
               </Select>
-              <Select>
+              <Select onValueChange={handleDateRangeChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Date range" />
                 </SelectTrigger>
@@ -123,36 +182,15 @@ const Dashboard = () => {
                   <SelectItem value="90">Last 90 days</SelectItem>
                 </SelectContent>
               </Select>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Audience segment" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All segments</SelectItem>
-                  <SelectItem value="new">New subscribers</SelectItem>
-                  <SelectItem value="active">Active users</SelectItem>
-                  <SelectItem value="inactive">Inactive users</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="openRate">Open rate</SelectItem>
-                  <SelectItem value="clickRate">Click rate</SelectItem>
-                  <SelectItem value="conversionRate">Conversion rate</SelectItem>
-                </SelectContent>
-              </Select>
+          
             </div>
 
-            <StatCards campaigns={campaigns} />
+            <StatCards campaigns={updatedCampaigns} />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <EmailPerformanceTrends campaigns={campaigns} />
-              
-              {/* You can add more components here, such as PerformanceByDeviceType */}
-             <DevicePerformance campaigns = {campaigns} />
+              <EmailPerformanceTrends campaigns={updatedCampaigns} />
+
+             <DevicePerformance campaigns = {updatedCampaigns} />
             </div>
           </div>
         </main>

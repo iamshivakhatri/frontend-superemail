@@ -1,13 +1,9 @@
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Campaign } from '@prisma/client';
 
-interface Campaign {
-  createdAt: string;
-  opened: number;
-  clicked: number;
-  delivered: number;
-}
+
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -36,8 +32,8 @@ const EmailPerformanceTrends: React.FC<{ campaigns: Campaign[] }> = ({ campaigns
     .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
     .map(campaign => ({
       date: new Date(campaign.createdAt).toLocaleDateString(),
-      openRate: (campaign.opened)/(campaign.delivered) * 100,
-      clickRate: (campaign.clicked)/(campaign.delivered) * 100
+      openRate: campaign.delivered ? ((campaign.opened || 0) / campaign.delivered) * 100 : 0, // Use || 0 to handle null
+      clickRate: campaign.delivered ? ((campaign.clicked || 0) / campaign.delivered) * 100 : 0 // Use || 0 to handle null
     }));
 
   return (

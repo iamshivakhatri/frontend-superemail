@@ -1,36 +1,11 @@
 import React, { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent } from '@/components/ui/card';
+import { Campaign, DeviceTracking } from '@prisma/client';
 
-interface Campaign {
-    id: string;
-    campaignName: string;
-    campaignType: string;
-    subject: string;
-    emailBody: string;
-    targetAudience: string;
-    recurringCampaign: boolean;
-    scheduleCampaign?: string;
-    endDate?: string;
-    userId: string;
-    audiencefileId: string;
-    createdAt: string;
-    updatedAt: string;
-    sent?: number; // Number of emails sent
-    delivered?: number; // Number of emails delivered
-    opened?: number; // Number of emails opened
-    clicked?: number; // Number of clicks on the campaign emails
-    deviceTracking?: DeviceTracking; // Relation to DeviceTracking
-}
 
-interface DeviceTracking {
-    id: string;
-    smartphone: number;
-    desktopLaptop: number;
-    tablet: number;
-    smartwatch: number;
-    campaignType: string;
-}
+
+
 
 interface CustomTooltipProps {
     active?: boolean;
@@ -50,12 +25,11 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     return null;
 };
 
-const DevicePerformance = ({ campaigns }: { campaigns: Campaign[] }) => {
+const DevicePerformance = ({ campaigns }: { campaigns: (Campaign & { deviceTracking?: DeviceTracking | null })[] }) => {
     console.log('campaigns at the device level', campaigns);
     const devicePerformance = useMemo(() => {
         const deviceCounts = campaigns.reduce((acc, campaign) => {
             const deviceTrack = campaign.deviceTracking; // Access deviceTracking directly
-    
             if (deviceTrack) {
                 acc.smartphone = (acc.smartphone || 0) + (deviceTrack.smartphone || 0);
                 acc.desktopLaptop = (acc.desktopLaptop || 0) + (deviceTrack.desktopLaptop || 0);
