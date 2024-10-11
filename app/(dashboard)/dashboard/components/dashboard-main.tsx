@@ -49,11 +49,11 @@ const emailData = [
 ]
 
 const devicePerformance = [
-  { device: 'Smartphone', opened: 60, clicks: 50 },
-  { device: 'Desktop/Laptop', opened: 90, clicks: 95 },
-  { device: 'Tablet', opened: 32, clicks: 18 },
-  { device: 'Smartwatch', opened: 65, clicks: 72 },
-  { device: 'Other', opened: 42, clicks: 35 },
+  { device: 'Smartphone', opened: 60},
+  { device: 'Desktop/Laptop', opened: 90 },
+  { device: 'Tablet', opened: 32 },
+  { device: 'Smartwatch', opened: 65 },
+  { device: 'Other', opened: 42 },
 ]
 
 const deliveryData = [
@@ -308,10 +308,10 @@ const Dashboard = () => {
                 icon={<ArrowUpRight className="h-4 w-4 ml-1" />} 
               />
               <StatCard 
-                title="Click Through" 
+                title="Delivered Rate" 
                 value="3.03%" 
                 change="+1.0%" 
-                subtext="15 Click Through" 
+                subtext="15 delivered" 
                 icon={<ArrowUpRight className="h-4 w-4 ml-1" />} 
               />
             </div>
@@ -356,7 +356,7 @@ const Dashboard = () => {
                   <div className="flex justify-center mt-4">
                     <div className="flex items-center mr-4">
                       <div className="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Click through rate</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Delivered rate</span>
                     </div>
                     <div className="flex items-center">
                       <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
@@ -376,7 +376,6 @@ const Dashboard = () => {
                         <YAxis dataKey="device" type="category" width={100} />
                         <Tooltip content={<CustomTooltip />} />
                         <Bar dataKey="opened" fill="url(#colorClickThrough)" />
-                        <Bar dataKey="clicks" fill="url(#colorOpenRate)" />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
@@ -385,10 +384,7 @@ const Dashboard = () => {
                       <div className="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
                       <span className="text-sm text-gray-600 dark:text-gray-400">Opened</span>
                     </div>
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Clicks</span>
-                    </div>
+               
                   </div>
                 </CardContent>
               </Card>

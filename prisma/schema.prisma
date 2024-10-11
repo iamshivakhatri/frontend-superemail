@@ -14,39 +14,69 @@ datasource db {
 }
 
 model User {
-  id            String       @id @default(auto()) @map("_id") @db.ObjectId // MongoDB's ObjectId type
-  email         String       @unique // User's email, should also be unique
-  name          String?      // User's full name (optional if you want to store it)
-  profilePic    String?      // URL to the user's profile picture (optional)
-  createdAt     DateTime     @default(now()) // Timestamp of when the user was created
-  updatedAt     DateTime     @updatedAt // Automatically update timestamp whenever data changes
-  campaigns     Campaign[]   // One user can have many campaigns
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId // MongoDB's ObjectId type
+  email          String           @unique // User's email, should also be unique
+  name           String? // User's full name (optional if you want to store it)
+  profilePic     String? // URL to the user's profile picture (optional)
+  createdAt      DateTime         @default(now()) // Timestamp of when the user was created
+  updatedAt      DateTime         @updatedAt // Automatically update timestamp whenever data changes
+  campaigns      Campaign[] // One user can have many campaigns
+  DeviceTracking DeviceTracking[]
 }
 
 model Audiencefile {
   id            String     @id @default(auto()) @map("_id") @db.ObjectId // MongoDB's ObjectId type
-  audienceName  String[]   // Array of audience names
-  audienceEmail String[]   // Array of audience emails
+  audienceName  String[] // Array of audience names
+  audienceEmail String[] // Array of audience emails
   campaigns     Campaign[] // One audience file can be targeted by multiple campaigns
 }
 
-
 model Campaign {
-  id              String         @id @default(auto()) @map("_id") @db.ObjectId // MongoDB's ObjectId type
-  campaignName    String         // Name of the campaign
-  campaignType    String         // Type of the campaign
-  endDate         DateTime?      // End date of the campaign
-  scheduleCampaign DateTime?     // Scheduled time for the campaign
-  recurringCampaign Boolean      // Whether the campaign is recurring or not
-  emailTemplate   String?        // Email template used for the campaign
-  subject         String         // Subject of the campaign email
-  emailBody       String         // Body content of the campaign email
-  targetAudience  String         // Target audience description
-  userId          String         @db.ObjectId  // Foreign key to the User model
-  audiencefileId  String         @db.ObjectId  // Foreign key to the Audiencefile model
-  user            User           @relation(fields: [userId], references: [id]) // Relation to User
-  audiencefile    Audiencefile   @relation(fields: [audiencefileId], references: [id]) // Relation to Audiencefile
-  createdAt       DateTime       @default(now()) // Timestamp when the campaign was created
-  updatedAt       DateTime       @updatedAt // Automatically update timestamp whenever data changes
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  campaignName      String // Name of the campaign
+  campaignType      String // Type of the campaign (e.g., Email, SMS, etc.)
+  emailTemplate     String? // Email template used for the campaign (optional)
+  subject           String // Subject of the campaign email
+  emailBody         String // Body content of the campaign email
+  targetAudience    String // Target audience description
+  recurringCampaign Boolean // Whether the campaign is recurring or not
+  scheduleCampaign  DateTime? // Scheduled time for the campaign (optional)
+  endDate           DateTime? // End date of the campaign (optional)
+
+  userId         String @db.ObjectId // Foreign key to the User model
+  audiencefileId String @db.ObjectId // Foreign key to the Audiencefile model
+
+  createdAt DateTime @default(now()) // Timestamp when the campaign was created
+  updatedAt DateTime @updatedAt // Automatically update timestamp whenever data changes
+
+  // Tracking Fields
+  sent      Int // Number of emails sent
+  delivered Int // Number of emails delivered
+  opened    Int // Number of emails opened
+  clicked   Int // Number of clicks on the campaign emails
+
+  // Relations
+  user           User             @relation(fields: [userId], references: [id]) // Relation to User
+  audiencefile   Audiencefile     @relation(fields: [audiencefileId], references: [id]) // Relation to Audiencefile
+  DeviceTracking DeviceTracking[]
 }
 
+model DeviceTracking {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId // Unique identifier for each device tracking event
+  userId     String @db.ObjectId // Foreign key to the User model
+  campaignId String @db.ObjectId // Foreign key to the Campaign model
+
+  // Device types
+  smartphone    Int // Number of times opened on a smartphone
+  desktopLaptop Int // Number of times opened on a desktop or laptop
+  tablet        Int // Number of times opened on a tablet
+  smartwatch    Int // Number of times opened on a smartwatch
+
+  campaignType String // Type of the campaign (e.g., Email, SMS, etc.)
+
+  createdAt DateTime @default(now()) // Timestamp for when the tracking entry was created
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id]) // Relation to User
+  campaign Campaign @relation(fields: [campaignId], references: [id]) // Relation to Campaign
+}
