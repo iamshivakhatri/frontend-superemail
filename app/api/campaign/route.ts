@@ -9,13 +9,13 @@ export async function POST(request: Request) {
       audiencefileId,
       campaignName,
       campaignType,
-      endDate,
-      scheduleCampaign,
-      recurringCampaign,
       emailTemplate,
       subject,
       emailBody,
       targetAudience,
+      recurringCampaign,
+      scheduleCampaign,
+      endDate,
     } = await request.json();
 
     // Validate the required fields
@@ -59,13 +59,13 @@ export async function POST(request: Request) {
         audiencefileId,
         campaignName,
         campaignType,
-        endDate: endDate ? new Date(endDate) : null,
-        scheduleCampaign: scheduleCampaign ? new Date(scheduleCampaign) : null,
-        recurringCampaign,
-        emailTemplate,
+        emailTemplate, // Optional
         subject,
         emailBody,
         targetAudience,
+        recurringCampaign: recurringCampaign || false, // Default to false if not provided
+        scheduleCampaign: scheduleCampaign ? new Date(scheduleCampaign) : null,
+        endDate: endDate ? new Date(endDate) : null,
       },
     });
 
@@ -104,6 +104,41 @@ export async function GET(request: Request) {
     return NextResponse.json(campaigns, { status: 200 });
   } catch (error) {
     console.error('Error retrieving campaigns:', error);
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT update an existing campaign
+export async function PUT(request: Request) {
+  try {
+    const { id, ...data } = await request.json();
+
+    // Validate the campaign ID
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Campaign ID is required.' },
+        { status: 400 }
+      );
+    }
+
+    // Update the campaign in the database
+    const updatedCampaign = await prisma.campaign.update({
+      where: { id },
+      data: {
+        ...data,
+        // Ensure that optional fields are handled correctly
+        scheduleCampaign: data.scheduleCampaign ? new Date(data.scheduleCampaign) : undefined,
+        endDate: data.endDate ? new Date(data.endDate) : undefined,
+      },
+    });
+
+    // Return success response with the updated campaign
+    return NextResponse.json(updatedCampaign, { status: 200 });
+  } catch (error) {
+    console.error('Error updating campaign:', error);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

@@ -140,7 +140,7 @@ export default function CreateCampaign() {
           // setTrackingIds(newTrackingIds);
   
           // Save the campaign
-          const campaignResponse = await axios.post('/api/create-campaign', {
+          const campaignResponse = await axios.post('/api/campaign', {
               userId, // Assuming userId is defined in your component
               audiencefileId,
               campaignName,

@@ -50,10 +50,10 @@ model Campaign {
   updatedAt DateTime @updatedAt // Automatically update timestamp whenever data changes
 
   // Tracking Fields
-  sent      Int // Number of emails sent
-  delivered Int // Number of emails delivered
-  opened    Int // Number of emails opened
-  clicked   Int // Number of clicks on the campaign emails
+  sent      Int? // Number of emails sent
+  delivered Int? // Number of emails delivered
+  opened    Int? // Number of emails opened
+  clicked   Int? // Number of clicks on the campaign emails
 
   // Relations
   user           User             @relation(fields: [userId], references: [id]) // Relation to User
