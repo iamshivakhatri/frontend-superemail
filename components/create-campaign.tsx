@@ -53,7 +53,8 @@ export default function CreateCampaign() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [userInfo, setUserInfo] = useState<{ name: string; email: string; picture: string } | null>(null);
 
-  const {userId} = useAuth()
+  // const {userId} = useAuth()
+  const userId = "6706128e62c37fb8a639a659";
 
 
 
@@ -93,12 +94,12 @@ export default function CreateCampaign() {
 
 
   const handleSaveCampaign = async () => {
-      if (!isAuthenticated) {
-          console.error('User is not authenticated');
-          setModalMessage('You must be authenticated to create a campaign.');
-          setIsModalOpen(true);
-          return;
-      }
+      // if (!isAuthenticated) {
+      //     console.error('User is not authenticated');
+      //     setModalMessage('You must be authenticated to create a campaign.');
+      //     setIsModalOpen(true);
+      //     return;
+      // }
   
       // Check if all required fields are filled
       if (!campaignName || !campaignType || !subject || !body || !startDate || !endDate || csvData.length === 0) {
@@ -123,8 +124,9 @@ export default function CreateCampaign() {
           }
   
           const audiencefileId = audienceResponse.data.audiencefileId;
+          // setUserEmail("shiva.khatri01@gmail.com")
   
-          // Send emails
+          // // Send emails
           // const emailResponse = await axios.post('/auth/send-email', {
           //     recipients: csvData,
           //     subject,
@@ -140,19 +142,25 @@ export default function CreateCampaign() {
           // setTrackingIds(newTrackingIds);
   
           // Save the campaign
+          if (!userId || !audiencefileId || !campaignName || !campaignType || !subject || !body || !targetAudience) {
+            console.error('Missing required fields');
+            return;
+          }
+      
           const campaignResponse = await axios.post('/api/campaign', {
-              userId, // Assuming userId is defined in your component
-              audiencefileId,
-              campaignName,
-              campaignType,
-              endDate: endDate ? new Date(endDate).toISOString() : null,
-              scheduleCampaign: null, // Update this if you have scheduling logic
-              recurringCampaign: isRecurring, // Assuming isRecurring is defined in your component
-              emailTemplate: null, // If you have an email template, pass it here
-              subject,
-              emailBody: body,
-              targetAudience,
+            userId,
+            audiencefileId,
+            campaignName,
+            campaignType,
+            endDate: endDate ? new Date(endDate).toISOString() : null,
+            scheduleCampaign: null,
+            recurringCampaign: isRecurring,
+            emailTemplate: null,
+            subject,
+            emailBody: body,
+            targetAudience,
           });
+      
   
           if (campaignResponse.status !== 201) {
               throw new Error(`Error saving campaign: ${campaignResponse.status}`);

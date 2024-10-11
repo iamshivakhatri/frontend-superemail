@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card"
  // Adjust this import to match your UI library
 import { Mail, Clock } from 'lucide-react'; // Adjust this import for the icon library you're using
+import { Campaign } from '@prisma/client'; // Adjust this import to match your Prisma schema
 
 
 
@@ -11,18 +12,7 @@ interface AudienceFile {
   audienceEmail: string[];
 }
 
-interface Campaign {
-  id: string;
-  campaignName: string;
-  campaignType: string;
-  createdAt: string;
-  emailBody: string;
-  endDate: string;
-  recurringCampaign: boolean;
-  userId: string;
-  audiencefileId: string;
-  audiencefile: AudienceFile; // Added to match the structure
-}
+
 
 const CampaignCard: React.FC<{ campaign: Campaign; onClick: () => void }> = ({ campaign, onClick }) => {
   return (
@@ -43,7 +33,11 @@ const CampaignCard: React.FC<{ campaign: Campaign; onClick: () => void }> = ({ c
             {/* You can include recipient info if you want */}
             <Clock className="h-4 w-4 text-gray-400 ml-2" />
             <span className="text-sm text-gray-500">
+            {campaign.endDate && (
+            <>
               {Math.ceil((new Date(campaign.endDate).getTime() - new Date(campaign.createdAt).getTime()) / (1000 * 60 * 60 * 24))} days
+              </>
+          )}
             </span>
             <span className={`ml-2 px-2 py-1 text-xs font-semibold ${
               campaign.recurringCampaign ? 'text-green-800 bg-green-100' : 
@@ -54,7 +48,11 @@ const CampaignCard: React.FC<{ campaign: Campaign; onClick: () => void }> = ({ c
           </div>
         </div>
         <div className="mt-4 text-sm text-gray-500">
-          {new Date(campaign.createdAt).toLocaleDateString()} - {new Date(campaign.endDate).toLocaleDateString()}
+          {campaign.endDate && (
+            <>
+              {new Date(campaign.createdAt).toLocaleDateString()} - {new Date(campaign.endDate).toLocaleDateString()}
+            </>
+          )}
         </div>
       </CardContent>
     </Card>

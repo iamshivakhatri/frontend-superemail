@@ -170,6 +170,7 @@ const Dashboard = () => {
                   <SelectItem value="newsletter">Newsletter</SelectItem>
                   <SelectItem value="promotional">Promotional</SelectItem>
                   <SelectItem value="transactional">Transactional</SelectItem>
+                  <SelectItem value="automated">Automated</SelectItem>
                 </SelectContent>
               </Select>
               <Select onValueChange={handleDateRangeChange}>

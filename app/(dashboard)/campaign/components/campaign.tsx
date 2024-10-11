@@ -18,24 +18,12 @@ import axios from 'axios';
 import CampaignCard from '@/components/campaign-card';
 
 import  CreateCampaignModal from "@/components/modals/create-campaign-modal";
+import { Campaign } from '@prisma/client';
 
 interface AudienceFile {
   id: string;
   audienceName: string[];
   audienceEmail: string[];
-}
-
-interface Campaign {
-  id: string;
-  campaignName: string;
-  campaignType: string;
-  createdAt: string;
-  emailBody: string;
-  endDate: string;
-  recurringCampaign: boolean;
-  userId: string;
-  audiencefileId: string;
-  audiencefile: AudienceFile; // Added to match the structure
 }
 
 
@@ -47,8 +35,10 @@ const CampaignDashboard = () => {
   const [userInfo, setUserInfo] = useState<{ name: string; email: string; picture: string } | null>(null);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { userId } = useAuth(); // Get userId from your auth hook
+  // const { userId } = useAuth(); // Get userId from your auth hook
   const [isOpen, setIsOpen] = useState(false);
+
+  const userId = "6706128e62c37fb8a639a659";
 
   // Handle dark mode toggle
   const toggleDarkMode = () => {
@@ -68,7 +58,7 @@ const CampaignDashboard = () => {
       try {
         // Fetch campaigns from the API using the userId
         console.log('userId before get request', userId);
-        const response = await axios.get("/api/create-campaign", {
+        const response = await axios.get("/api/campaign", {
           params: {
             userId: userId,
           },
