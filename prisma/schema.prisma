@@ -45,6 +45,7 @@ model Campaign {
 
   userId         String @db.ObjectId // Foreign key to the User model
   audiencefileId String @db.ObjectId // Foreign key to the Audiencefile model
+  // deviceTrackingId String @db.ObjectId @unique // Foreign key to the DeviceTracking model
 
   createdAt DateTime @default(now()) // Timestamp when the campaign was created
   updatedAt DateTime @updatedAt // Automatically update timestamp whenever data changes
@@ -58,19 +59,22 @@ model Campaign {
   // Relations
   user           User             @relation(fields: [userId], references: [id]) // Relation to User
   audiencefile   Audiencefile     @relation(fields: [audiencefileId], references: [id]) // Relation to Audiencefile
-  DeviceTracking DeviceTracking[]
+  deviceTracking    DeviceTracking?  @relation // Optional relation to DeviceTracking (exactly one per campaign)
+
+  // devicetracking DeviceTracking  @relation(fields: [deviceTrackingId], references: [id]) // Relation to DeviceTracking
 }
 
 model DeviceTracking {
   id         String @id @default(auto()) @map("_id") @db.ObjectId // Unique identifier for each device tracking event
   userId     String @db.ObjectId // Foreign key to the User model
-  campaignId String @db.ObjectId // Foreign key to the Campaign model
+  campaignId String @db.ObjectId @unique// Foreign key to the Campaign model
+
 
   // Device types
-  smartphone    Int // Number of times opened on a smartphone
-  desktopLaptop Int // Number of times opened on a desktop or laptop
-  tablet        Int // Number of times opened on a tablet
-  smartwatch    Int // Number of times opened on a smartwatch
+  smartphone    Int? // Number of times opened on a smartphone
+  desktopLaptop Int? // Number of times opened on a desktop or laptop
+  tablet        Int? // Number of times opened on a tablet
+  smartwatch    Int? // Number of times opened on a smartwatch
 
   campaignType String // Type of the campaign (e.g., Email, SMS, etc.)
 

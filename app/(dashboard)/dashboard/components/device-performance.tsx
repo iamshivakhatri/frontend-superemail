@@ -3,11 +3,33 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Card, CardContent } from '@/components/ui/card';
 
 interface Campaign {
+    id: string;
+    campaignName: string;
+    campaignType: string;
+    subject: string;
+    emailBody: string;
+    targetAudience: string;
+    recurringCampaign: boolean;
+    scheduleCampaign?: string;
+    endDate?: string;
+    userId: string;
+    audiencefileId: string;
     createdAt: string;
-    opened: number | null; // Allow null if data is not available
-    clicked: number | null;
-    delivered: number | null;
-    deviceOpens?: Record<string, number>; // Optional field for device opens
+    updatedAt: string;
+    sent?: number; // Number of emails sent
+    delivered?: number; // Number of emails delivered
+    opened?: number; // Number of emails opened
+    clicked?: number; // Number of clicks on the campaign emails
+    deviceTracking?: DeviceTracking; // Relation to DeviceTracking
+}
+
+interface DeviceTracking {
+    id: string;
+    smartphone: number;
+    desktopLaptop: number;
+    tablet: number;
+    smartwatch: number;
+    campaignType: string;
 }
 
 interface CustomTooltipProps {
@@ -29,20 +51,27 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 };
 
 const DevicePerformance = ({ campaigns }: { campaigns: Campaign[] }) => {
+    console.log('campaigns at the device level', campaigns);
     const devicePerformance = useMemo(() => {
         const deviceCounts = campaigns.reduce((acc, campaign) => {
-            // Assuming that each campaign could potentially include device opens
-            const deviceOpens = campaign.deviceOpens || {};
-            Object.entries(deviceOpens).forEach(([device, count]) => {
-                acc[device] = (acc[device] || 0) + count;
-            });
+            const deviceTrack = campaign.deviceTracking; // Access deviceTracking directly
+    
+            if (deviceTrack) {
+                acc.smartphone = (acc.smartphone || 0) + (deviceTrack.smartphone || 0);
+                acc.desktopLaptop = (acc.desktopLaptop || 0) + (deviceTrack.desktopLaptop || 0);
+                acc.tablet = (acc.tablet || 0) + (deviceTrack.tablet || 0);
+                acc.smartwatch = (acc.smartwatch || 0) + (deviceTrack.smartwatch || 0);
+            }
+    
             return acc;
         }, {} as Record<string, number>);
-
-        return Object.entries(deviceCounts).map(([device, opened]) => ({
-            device,
-            opened
-        }));
+    
+        return [
+            { device: 'Smartphone', opened: deviceCounts.smartphone || 0 },
+            { device: 'Desktop/Laptop', opened: deviceCounts.desktopLaptop || 0 },
+            { device: 'Tablet', opened: deviceCounts.tablet || 0 },
+            { device: 'Smartwatch', opened: deviceCounts.smartwatch || 0 },
+        ];
     }, [campaigns]);
 
     return (

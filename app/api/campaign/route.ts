@@ -97,8 +97,12 @@ export async function GET(request: Request) {
     // Retrieve campaigns for the specified userId
     const campaigns = await prisma.campaign.findMany({
       where: { userId },
-      include: { audiencefile: true }, // Optionally include related audiencefile data
+      include: {
+         audiencefile: true ,
+         deviceTracking: true ,
+        }, // Optionally include related audiencefile data
     });
+    console.log("campaigns", campaigns);
 
     // Return the list of campaigns
     return NextResponse.json(campaigns, { status: 200 });
