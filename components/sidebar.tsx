@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LayoutDashboard, MessageSquare, CreditCard, FileText, Mail, Settings, ChevronDown, ChevronLeft, MoreVertical, User } from 'lucide-react';
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/auth-provider" 
+import { log } from 'console';
 
 
 
@@ -31,6 +32,7 @@ const menuItems = [
 //   { href: '/discuss', label: 'Discuss', icon: <MessageSquare className="mr-2 h-4 w-4" /> },
 
 
+
   { href: '/subscription', label: 'Subscription', icon: <CreditCard className="mr-2 h-4 w-4" /> },
   { href: '/contact', label: 'Contact', icon: <FileText className="mr-2 h-4 w-4" /> },
   { href: '/email-templates', label: 'Email Templates', icon: <Mail className="mr-2 h-4 w-4" /> },
@@ -43,7 +45,13 @@ const Sidebar: React.FC<SidebarProps> = ({ darkMode, toggleDarkMode, className, 
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const router = usePathname();
-  const { userId, userEmail, userProfilePic, userName, isLoggedIn } = useAuth();
+  const { userId, userEmail, userProfilePic, userName, isLoggedIn, logOut } = useAuth();
+  const [showLogout, setShowLogout] = useState(false); // State to manage logout visibility
+
+// Function to toggle logout option visibility
+const toggleLogoutOption = () => {
+  setShowLogout((prev) => !prev);
+};
 
 
 
@@ -91,6 +99,12 @@ const Sidebar: React.FC<SidebarProps> = ({ darkMode, toggleDarkMode, className, 
 
   // Extract the current route from the router
 //   const currentRoute = router.asPath.split('/').pop();
+
+ const handleLogout = () => {
+    console.log('Logging out at sidebar');
+    logOut();
+   
+  }
 
   return (
     <aside className={`bg-white dark:bg-gray-800 flex flex-col transition-all duration-300 ease-in-out fixed inset-y-0 left-0 z-50 w-64 lg:w-64 transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:relative lg:translate-x-0 ${className}`}>
@@ -146,10 +160,22 @@ const Sidebar: React.FC<SidebarProps> = ({ darkMode, toggleDarkMode, className, 
               {userInfo ? userInfo.email : error || 'Loading...'}
             </p>
           </div>
-          <Button variant="ghost" size="icon" className="ml-auto">
-            <MoreVertical className="h-4 w-4" />
+          <Button variant="ghost" size="icon" className="ml-auto" onClick={toggleLogoutOption}>
+          <MoreVertical className="h-4 w-4" />
+        </Button>
+        </div>
+         {/* Conditional rendering for logout option */}
+      {showLogout && (
+        <div className="mt-2">
+          <Button 
+            variant="outline" 
+            className="w-full" 
+            onClick={handleLogout} // Call handleLogout on click
+          >
+            Logout
           </Button>
         </div>
+      )}
       </div>
     </aside>
   );

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import Sidebar from '@/components/sidebar';
@@ -8,15 +8,15 @@ import { useRouter } from 'next/navigation';
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [darkMode, setDarkMode] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { userId, loading } = useAuth(); // Get loading state
+  const { isLoggedIn, loading } = useAuth(); // Get isLoggedIn and loading state
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !userId) {
+    if (!loading && !isLoggedIn) {
       console.log('Not logged in');
-      router.push('/login');  // Redirect to login only if userId is null and not loading
+      router.push('/login');  // Redirect to login if not logged in and not loading
     }
-  }, [loading, userId, router]);
+  }, [loading, isLoggedIn, router]);
 
   const toggleDarkMode = () => setDarkMode(prev => !prev);
 

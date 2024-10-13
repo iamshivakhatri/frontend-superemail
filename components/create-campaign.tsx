@@ -29,10 +29,9 @@ const emailTemplates = [
   { id: 3, name: "Product Announcement", subject: "Introducing Our Latest Product", body: "Hi [Name],\n\nWe're thrilled to announce our newest product..." },
 ]
 
-export default function CreateCampaign() {
+export default function CreateCampaign({onCreate}:{onCreate:()=>void}) {
   const router = useRouter()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [userEmail, setUserEmail] = useState('')
   const [tokens, setTokens] = useState(null)
   const [darkMode, setDarkMode] = useState(false)
   const [campaignName, setCampaignName] = useState('')
@@ -54,7 +53,7 @@ export default function CreateCampaign() {
   const [userInfo, setUserInfo] = useState<{ name: string; email: string; picture: string } | null>(null);
   const [title, setTitle] = useState('Success');
 
-  const {userId} = useAuth()
+  const {userId, userEmail} = useAuth()
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -71,7 +70,6 @@ export default function CreateCampaign() {
             },
           })
           const data = await response.json()
-          setUserEmail(data.email)
         } catch (error) {
           console.error('Error fetching user info:', error)
         }
@@ -148,6 +146,12 @@ export default function CreateCampaign() {
           }
   
           const audiencefileId = audienceResponse.data.audiencefileId;
+
+          console.log("recipients", csvData)
+          console.log("subject", subject)
+          console.log("body", body)
+          console.log("userEmail", userEmail)
+          console.log("tokens", tokens)
   
           // Send emails
           const emailResponse = await axios.post('https://emailapp-backend.onrender.com/auth/send-email', {
@@ -190,6 +194,7 @@ export default function CreateCampaign() {
           setModalMessage(`Error creating campaign and sending emails: ${error instanceof Error ? error.message : 'Unknown error'}`);
           setTitle('Error');
           setIsModalOpen(true);
+          onCreate();
       }
   };
   

@@ -12,6 +12,8 @@ import EmailPerformanceTrends from './email-performance-trends'
 import DevicePerformance from './device-performance';
 import { Campaign } from '@prisma/client';
 import { set } from 'date-fns';
+import { useAuth } from "@/context/auth-provider" 
+
 
 
 const Dashboard = () => {
@@ -25,7 +27,7 @@ const Dashboard = () => {
 
 
 
-  const userId = "6706128e62c37fb8a639a659";
+  const { userId } = useAuth(); // Get the userId from the auth context
 
   // Handle campaignType change
   const handleCampaignTypeChange = (value: string) => {

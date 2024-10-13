@@ -11,7 +11,7 @@ interface CreateCampaignModalProps {
 const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({ isOpen, onClose }) => {
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
-            <CreateCampaign />
+            <CreateCampaign onCreate={onClose} />
 
         </Modal>
     );
