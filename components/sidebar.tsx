@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LayoutDashboard, MessageSquare, CreditCard, FileText, Mail, Settings, ChevronDown, ChevronLeft, MoreVertical, User } from 'lucide-react';
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/auth-provider" 
+
 
 
 interface SidebarProps {
@@ -41,7 +43,8 @@ const Sidebar: React.FC<SidebarProps> = ({ darkMode, toggleDarkMode, className, 
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const router = usePathname();
-  console.log(router);
+  const { userId, userEmail, userProfilePic, userName, isLoggedIn } = useAuth();
+
 
 
 

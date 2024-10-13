@@ -3,8 +3,12 @@
 import { useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import axios from "axios"
+import { useAuth } from "@/context/auth-provider";
+
 
 export default function AuthCallback() {
+  const { setUser } = useAuth();
+
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -35,9 +39,24 @@ export default function AuthCallback() {
             name: data.name,
             profilePic: data.picture
           })
+          if (store.status === 200 || store.status === 201) {
+            console.log('User id :', store.data.userId);
+            console.log('User picture :', store.data.profilePic); 
+            console.log("whole user object :", store.data);
+                setUser({
+                    userId: store.data.userId,
+                    userEmail: store.data.email,
+                    userProfilePic: store.data.profilePic,
+                    userName: store.data.name,
+                });
+            } else {
+                console.error('Error storing user data:', response.data.error);
+            }
 
 
           console.log("Response from [Store-user]", store.data);
+
+
           } catch (error:any) {
               console.error("Error storing user info:", error.response ? error.response.data : error.message);
           }

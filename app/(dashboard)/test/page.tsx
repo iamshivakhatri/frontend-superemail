@@ -1,20 +1,27 @@
-import React from 'react'
-import { AuthProvider } from '@/context/auth-provider'
-import { useAuth } from '@/context/auth-provider'
+'use client';
 
-type Props = {}
+import React from 'react';
+import { useAuth } from "@/context/auth-provider" 
 
-const page = (props: Props) => {
-  // const {userEmail, userId, userName, userProfilePic} = useAuth()
-  const { userId } = useAuth (); 
-  // console.log('userEmail :', userEmail);
-  console.log('userId :', userId);
-  // console.log('userName :', userName);
-  // console.log('userProfilePic :', userProfilePic);
+const UserProfile: React.FC = () => {
+  const { userId, userEmail, userProfilePic, userName, isLoggedIn } = useAuth();
+  console.log(isLoggedIn);
 
   return (
-    <div>page</div>
-  )
-}
+    <div>
+      {isLoggedIn ? (
+        <div>
+          <h1>User Profile</h1>
+          <p><strong>Name:</strong> {userName}</p>
+          <p><strong>Email:</strong> {userEmail}</p>
+          <img src={userProfilePic ?? 'default-pic-url'} alt="Profile" style={{ width: '100px', height: '100px' }} />
+          <p><strong>User ID:</strong> {userId}</p>
+        </div>
+      ) : (
+        <p>Please log in to see your profile information.</p>
+      )}
+    </div>
+  );
+};
 
-export default page
+export default UserProfile;

@@ -1,11 +1,10 @@
-"use client";
+'use client';
 
 import React, { useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';  // This works because we are now in a Client Component
 import useAuth from "@/hooks/useAuth";
-// import * as jwt_decode from "jwt-decode";
 
 export default function Login() {
   const isLoggedIn = useAuth();  
@@ -20,18 +19,7 @@ export default function Login() {
     if (token) {
       try {
         console.log('Token:', token);
-        // const decodedToken = jwt_decode(token); // Decode the JWT token
-        // console.log('Decoded token:', decodedToken);
-
-        // // Check the token expiration
-        // const currentTime = Date.now() / 1000; // Current time in seconds
-        // if (decodedToken.exp && decodedToken.exp > currentTime) {
-        //   // Token is valid, redirect to the dashboard
-        //   router.push('/');
-        // } else {
-        //   // Token has expired, clear it from local storage
-        //   localStorage.removeItem('gmail_tokens');
-        // }
+        // If you need to decode, implement decoding logic here.
       } catch (error) {
         console.error('Error decoding token:', error);
         localStorage.removeItem('gmail_tokens');
@@ -39,7 +27,6 @@ export default function Login() {
     }
   };
 
-  // Check token validity on component mount
   useEffect(() => {
     checkTokenValidity();
   }, []);

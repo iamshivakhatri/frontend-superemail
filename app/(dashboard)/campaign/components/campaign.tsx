@@ -35,10 +35,9 @@ const CampaignDashboard = () => {
   const [userInfo, setUserInfo] = useState<{ name: string; email: string; picture: string } | null>(null);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  // const { userId } = useAuth(); // Get userId from your auth hook
+  const { userId } = useAuth(); 
   const [isOpen, setIsOpen] = useState(false);
 
-  const userId = "6706128e62c37fb8a639a659";
 
   // Handle dark mode toggle
   const toggleDarkMode = () => {

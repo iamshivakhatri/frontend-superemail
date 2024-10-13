@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prismadb'; // Adjust this path to where your Prisma instance is configured.
 
+
 export async function POST(request: Request) {
   try {
     // Parse the request body
@@ -52,34 +53,51 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Audience file not found.' }, { status: 404 });
     }
 
-    // Create the new campaign and associate it with the user and audience file
-    const newCampaign = await prisma.campaign.create({
-      data: {
-        userId,
-        audiencefileId,
-        campaignName,
-        campaignType,
-        emailTemplate, // Optional
-        subject,
-        emailBody,
-        targetAudience,
-        recurringCampaign: recurringCampaign || false, // Default to false if not provided
-        scheduleCampaign: scheduleCampaign ? new Date(scheduleCampaign) : null,
-        endDate: endDate ? new Date(endDate) : null,
-      },
+    // Start a transaction to create the campaign and the device tracking
+    const newCampaign = await prisma.$transaction(async (prisma) => {
+      // Create the new campaign
+      const campaign = await prisma.campaign.create({
+        data: {
+          userId,
+          audiencefileId,
+          campaignName,
+          campaignType,
+          emailTemplate, // Optional
+          subject,
+          emailBody,
+          targetAudience,
+          recurringCampaign: recurringCampaign || false, // Default to false if not provided
+          scheduleCampaign: scheduleCampaign ? new Date(scheduleCampaign) : null,
+          endDate: endDate ? new Date(endDate) : null,
+        },
+      });
+
+      // Create a DeviceTracking entry associated with the campaign
+      const deviceTracking = await prisma.deviceTracking.create({
+        data: {
+          userId,
+          campaignId: campaign.id, // Link the campaign with the device tracking entry
+          campaignType,
+          smartphone: 0, // Initialize tracking fields to 0
+          desktopLaptop: 0,
+          tablet: 0,
+          smartwatch: 0,
+        },
+      });
+
+      return NextResponse.json({ campaign, deviceTracking }, { status: 201 });
     });
 
-    // Return success response with the new campaign
+    // Return success response with the new campaign and device tracking details
     return NextResponse.json(newCampaign, { status: 201 });
   } catch (error) {
-    console.error('Error creating campaign:', error);
+    console.error('Error creating campaign and device tracking:', error);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
     );
   }
 }
-
 export async function GET(request: Request) {
   console.log('GET request received:', request.url);
   const { searchParams } = new URL(request.url);

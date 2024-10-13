@@ -52,11 +52,35 @@ export default function CreateCampaign() {
   const [trackingIds, setTrackingIds] = useState<string[]>([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [userInfo, setUserInfo] = useState<{ name: string; email: string; picture: string } | null>(null);
+  const [title, setTitle] = useState('Success');
 
-  // const {userId} = useAuth()
-  const userId = "6706128e62c37fb8a639a659";
+  const {userId} = useAuth()
 
-
+  useEffect(() => {
+    const checkAuth = async () => {
+      const storedTokens = localStorage.getItem('gmail_tokens')
+      if (storedTokens) {
+        const parsedTokens = JSON.parse(storedTokens)
+        setTokens(parsedTokens)
+        setIsAuthenticated(true)
+        // Fetch user email using the access token
+        try {
+          const response = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+            headers: {
+              Authorization: `Bearer ${parsedTokens.access_token}`,
+            },
+          })
+          const data = await response.json()
+          setUserEmail(data.email)
+        } catch (error) {
+          console.error('Error fetching user info:', error)
+        }
+      } else {
+        router.push('/') // Redirect to login page if not authenticated
+      }
+    }
+    checkAuth()
+  }, [router])
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -94,12 +118,12 @@ export default function CreateCampaign() {
 
 
   const handleSaveCampaign = async () => {
-      // if (!isAuthenticated) {
-      //     console.error('User is not authenticated');
-      //     setModalMessage('You must be authenticated to create a campaign.');
-      //     setIsModalOpen(true);
-      //     return;
-      // }
+      if (!isAuthenticated) {
+          console.error('User is not authenticated');
+          setModalMessage('You must be authenticated to create a campaign.');
+          setIsModalOpen(true);
+          return;
+      }
   
       // Check if all required fields are filled
       if (!campaignName || !campaignType || !subject || !body || !startDate || !endDate || csvData.length === 0) {
@@ -124,43 +148,36 @@ export default function CreateCampaign() {
           }
   
           const audiencefileId = audienceResponse.data.audiencefileId;
-          // setUserEmail("shiva.khatri01@gmail.com")
   
-          // // Send emails
-          // const emailResponse = await axios.post('/auth/send-email', {
-          //     recipients: csvData,
-          //     subject,
-          //     body,
-          //     userEmail,
-          //     tokens,
-          // });
+          // Send emails
+          const emailResponse = await axios.post('https://emailapp-backend.onrender.com/auth/send-email', {
+              recipients: csvData,
+              subject,
+              body,
+              userEmail,
+              tokens,
+          });
   
-          // console.log('Emails sent successfully:', emailResponse.data);
+          console.log('Emails sent successfully:', emailResponse.data);
           
           // Store tracking IDs
-          // const newTrackingIds = emailResponse.data.info.map((item: any) => item.trackingId);
-          // setTrackingIds(newTrackingIds);
+          const newTrackingIds = emailResponse.data.info.map((item: any) => item.trackingId);
+          setTrackingIds(newTrackingIds);
   
           // Save the campaign
-          if (!userId || !audiencefileId || !campaignName || !campaignType || !subject || !body || !targetAudience) {
-            console.error('Missing required fields');
-            return;
-          }
-      
           const campaignResponse = await axios.post('/api/campaign', {
-            userId,
-            audiencefileId,
-            campaignName,
-            campaignType,
-            endDate: endDate ? new Date(endDate).toISOString() : null,
-            scheduleCampaign: null,
-            recurringCampaign: isRecurring,
-            emailTemplate: null,
-            subject,
-            emailBody: body,
-            targetAudience,
+              userId, // Assuming userId is defined in your component
+              audiencefileId,
+              campaignName,
+              campaignType,
+              endDate: endDate ? new Date(endDate).toISOString() : null,
+              scheduleCampaign: null, // Update this if you have scheduling logic
+              recurringCampaign: isRecurring, // Assuming isRecurring is defined in your component
+              emailTemplate: null, // If you have an email template, pass it here
+              subject,
+              emailBody: body,
+              targetAudience,
           });
-      
   
           if (campaignResponse.status !== 201) {
               throw new Error(`Error saving campaign: ${campaignResponse.status}`);
@@ -171,6 +188,7 @@ export default function CreateCampaign() {
       } catch (error) {
           console.error('Error saving campaign and sending emails:', error);
           setModalMessage(`Error creating campaign and sending emails: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          setTitle('Error');
           setIsModalOpen(true);
       }
   };
@@ -186,6 +204,7 @@ export default function CreateCampaign() {
   }
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault()
     const file = event.target.files?.[0]
     if (file) {
       const reader = new FileReader()
@@ -219,6 +238,9 @@ export default function CreateCampaign() {
     }
   }
 
+  if (!isAuthenticated) {
+    return <div>Loading...</div> // Or a more sophisticated loading state
+  }
 
   return (
     <div className={`flex flex-col h-screen ${darkMode ? 'dark' : ''}`}>
@@ -235,12 +257,31 @@ export default function CreateCampaign() {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-     
+    
         
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-8">
           <div className="max-w-4xl mx-auto">
-            
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Create Campaign</h1>
+              <div className="flex items-center space-x-4">
+                <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
+                  {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                </Button>
+                <Button variant="ghost" size="icon">
+                  <Bell className="h-5 w-5" />
+                </Button>
+                <Avatar>
+                  {userInfo && userInfo.picture ? (
+                    <AvatarImage src={userInfo.picture} alt={userInfo.name || userInfo.email} />
+                  ) : (
+                    <AvatarFallback>
+                      {userInfo ? getInitialsFromEmail(userInfo.email) : 'U'}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+              </div>
+            </div>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -403,10 +444,17 @@ export default function CreateCampaign() {
                             onChange={handleFileUpload}
                             className="flex-grow"
                           />
-                          <Button variant="outline" onClick={() => document.getElementById('audienceFile')?.click()}>
+                          <Button
+                            variant="outline"
+                            onClick={(e) => {
+                              e.preventDefault(); // Prevents page refresh
+                              document.getElementById('audienceFile')?.click();
+                            }}
+                          >
                             <Upload className="mr-2 h-4 w-4" />
                             Upload
                           </Button>
+
                         </div>
                         {audienceFile && (
                           <p className="text-sm text-gray-500 mt-1">
@@ -444,9 +492,9 @@ export default function CreateCampaign() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         message={modalMessage}
+        title={title}
       />
-      
-   
+  
     </div>
   )
 }
