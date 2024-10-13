@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '@/components/sidebar';
 import { useAuth } from "@/context/auth-provider"; 
 import { useRouter } from 'next/navigation';
+import DashboardSkeleton from '@/components/skeleton';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [darkMode, setDarkMode] = useState(false);
@@ -21,7 +22,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const toggleDarkMode = () => setDarkMode(prev => !prev);
 
   if (loading) {
-    return <div>Loading...</div>; // Show loading screen while checking local storage
+    return <DashboardSkeleton/>// Show loading screen while checking local storage
   }
 
   return (
