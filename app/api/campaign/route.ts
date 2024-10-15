@@ -17,6 +17,7 @@ export async function POST(request: Request) {
       recurringCampaign,
       scheduleCampaign,
       endDate,
+      newTrackingIds
     } = await request.json();
 
     // Validate the required fields
@@ -85,8 +86,18 @@ export async function POST(request: Request) {
         },
       });
 
-      return NextResponse.json({ campaign, deviceTracking }, { status: 201 });
+      const trackingIDs = await prisma.campaignTracking.create({
+            data: {
+                campaignId: campaign.id,
+                userId, // The user who sent the campaign
+                trackingIds: newTrackingIds, // The list of tracking IDs
+            },
+        });
+
+      return NextResponse.json({ campaign, deviceTracking, trackingIDs }, { status: 201 });
     });
+
+    
 
     // Return success response with the new campaign and device tracking details
     return NextResponse.json(newCampaign, { status: 201 });

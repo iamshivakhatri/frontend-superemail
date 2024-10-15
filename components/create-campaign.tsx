@@ -181,11 +181,14 @@ export default function CreateCampaign({onCreate}:{onCreate:()=>void}) {
               subject,
               emailBody: body,
               targetAudience,
+              newTrackingIds,
           });
+
   
           if (campaignResponse.status !== 201) {
               throw new Error(`Error saving campaign: ${campaignResponse.status}`);
           }
+
   
           // setModalMessage(`Campaign "${campaignName}" created and ${emailResponse.data.info.length} emails sent successfully!`);
           setIsModalOpen(true);

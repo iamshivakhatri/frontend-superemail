@@ -22,6 +22,7 @@ model User {
   updatedAt      DateTime         @updatedAt // Automatically update timestamp whenever data changes
   campaigns      Campaign[] // One user can have many campaigns
   DeviceTracking DeviceTracking[]
+  campaignTracking CampaignTracking[]
 }
 
 model Audiencefile {
@@ -60,6 +61,8 @@ model Campaign {
   user           User             @relation(fields: [userId], references: [id]) // Relation to User
   audiencefile   Audiencefile     @relation(fields: [audiencefileId], references: [id]) // Relation to Audiencefile
   deviceTracking    DeviceTracking?  @relation // Optional relation to DeviceTracking (exactly one per campaign)
+  campaignTracking CampaignTracking? // A campaign can have multiple CampaignTracking entries (one per user)
+
 
   // devicetracking DeviceTracking  @relation(fields: [deviceTrackingId], references: [id]) // Relation to DeviceTracking
 }
@@ -83,4 +86,18 @@ model DeviceTracking {
   // Relations
   user     User     @relation(fields: [userId], references: [id]) // Relation to User
   campaign Campaign @relation(fields: [campaignId], references: [id]) // Relation to Campaign
+}
+
+model CampaignTracking {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId // Unique identifier for the CampaignTracking entry
+  trackingIds String[] // Array of tracking IDs for individual emails sent in the campaign
+
+  campaignId  String   @db.ObjectId @unique // Foreign key to the Campaign model (one-to-one relation)
+  userId      String   @db.ObjectId // Foreign key to the User model
+
+  createdAt DateTime @default(now()) // Timestamp for when this entry was created
+
+  // Relations
+  campaign Campaign @relation(fields: [campaignId], references: [id]) // One-to-one relation with Campaign
+  user     User     @relation(fields: [userId], references: [id])     // Many-to-one relation with User
 }
