@@ -1,6 +1,7 @@
+"use client";
 import React, { useState } from 'react';
+import './SettingsPage.css'; // Importing the CSS file
 
-// Types for each section's settings
 interface ProfileSettings {
   username: string;
   email: string;
@@ -17,7 +18,6 @@ interface SecuritySettings {
 }
 
 const SettingsPage: React.FC = () => {
-  // Initial state for each section
   const [profile, setProfile] = useState<ProfileSettings>({
     username: '',
     email: '',
@@ -33,7 +33,6 @@ const SettingsPage: React.FC = () => {
     twoFactorAuth: false,
   });
 
-  // Handlers for each section
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setProfile((prevState) => ({
@@ -58,7 +57,6 @@ const SettingsPage: React.FC = () => {
     }));
   };
 
-  // Submit handler
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Profile:', profile);
@@ -70,8 +68,7 @@ const SettingsPage: React.FC = () => {
     <div className="settings-page">
       <h1>Settings</h1>
       <form onSubmit={handleSubmit}>
-        {/* Profile Section */}
-        <section>
+        <section className="settings-section">
           <h2>Profile</h2>
           <label>
             Username:
@@ -93,8 +90,7 @@ const SettingsPage: React.FC = () => {
           </label>
         </section>
 
-        {/* Notification Section */}
-        <section>
+        <section className="settings-section">
           <h2>Notifications</h2>
           <label>
             Email Notifications:
@@ -116,8 +112,7 @@ const SettingsPage: React.FC = () => {
           </label>
         </section>
 
-        {/* Security Section */}
-        <section>
+        <section className="settings-section">
           <h2>Security</h2>
           <label>
             Password:
@@ -139,7 +134,7 @@ const SettingsPage: React.FC = () => {
           </label>
         </section>
 
-        <button type="submit">Save Settings</button>
+        <button className="submit-btn" type="submit">Save Settings</button>
       </form>
     </div>
   );
