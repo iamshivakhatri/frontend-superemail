@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from 'react';
-import './SettingsPage.css'; // Importing the CSS file
 
 interface ProfileSettings {
   username: string;
