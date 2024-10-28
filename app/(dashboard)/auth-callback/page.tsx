@@ -24,7 +24,7 @@ export default function AuthCallback() {
     const storeUserInfo = async () => {
       try {
         // Send tokens to your backend to retrieve user info
-        const response = await axios.post('https://emailapp-backend.onrender.com/auth/user-info', {
+        const response = await axios.post('https://backend-superemail.onrender.com/auth/user-info', {
           tokens,
         }, {
           headers: {

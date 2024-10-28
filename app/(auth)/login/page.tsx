@@ -35,7 +35,7 @@ export default function Login() {
   const handleGoogleLogin = async () => {
     try {
       // Redirect to your backend's Google OAuth URL
-      window.location.href = 'https://emailapp-backend.onrender.com/auth/google';
+      window.location.href = 'https://backend-superemail.onrender.com/auth/google';
     } catch (error) {
       console.error('Error during Google login:', error);
     }

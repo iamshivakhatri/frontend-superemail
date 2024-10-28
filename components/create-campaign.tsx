@@ -15,11 +15,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { format } from "date-fns"
-import { enUS } from "date-fns/locale"
-import Link from 'next/link'
+
 import SuccessModal from '@/components/SuccessModal'
 import { getInitialsFromEmail } from '@/utils/stringUtils';
-import { saveCampaign, Campaign } from '@/utils/campaignStore';
 import axios from 'axios';
 import { useAuth } from "@/context/auth-provider";
 

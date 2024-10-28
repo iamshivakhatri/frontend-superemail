@@ -1,14 +1,14 @@
-import CreateCampaign from '@/components/create-campaign'
-import React from 'react'
+// import CreateCampaign from '@/components/create-campaign'
+// import React from 'react'
 
-type Props = {}
+// type Props = {}
 
-const CreateCampagin = (props: Props) => {
-  return (
-    <div>
-        <CreateCampaign />
-    </div>
-  )
-}
+// const CreateCampagin = (props: Props) => {
+//   return (
+//     <div>
+//         <CreateCampaign/>
+//     </div>
+//   )
+// }
 
-export default CreateCampagin
+// export default CreateCampagin
