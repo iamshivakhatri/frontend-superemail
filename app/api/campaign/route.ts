@@ -2,113 +2,65 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prismadb'; // Adjust this path to where your Prisma instance is configured.
 
 
-export async function POST(request: Request) {
+export async function POST(request: Request){
   try {
-    // Parse the request body
-    const {
-      userId,
-      audiencefileId,
-      campaignName,
-      campaignType,
-      emailTemplate,
-      subject,
-      emailBody,
-      targetAudience,
-      recurringCampaign,
-      scheduleCampaign,
-      endDate,
-      newTrackingIds
-    } = await request.json();
-
-    // Validate the required fields
-    if (
-      !userId ||
-      !audiencefileId ||
-      !campaignName ||
-      !campaignType ||
-      !subject ||
-      !emailBody ||
-      !targetAudience
-    ) {
-      return NextResponse.json(
-        { error: 'Missing required fields.' },
-        { status: 400 }
-      );
-    }
-
-    // Check if the user exists
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found.' }, { status: 404 });
-    }
-
-    // Check if the audience file exists
-    const audiencefile = await prisma.audiencefile.findUnique({
-      where: { id: audiencefileId },
-    });
-
-    if (!audiencefile) {
-      return NextResponse.json({ error: 'Audience file not found.' }, { status: 404 });
-    }
-
-    // Start a transaction to create the campaign and the device tracking
-    const newCampaign = await prisma.$transaction(async (prisma) => {
-      // Create the new campaign
-      const campaign = await prisma.campaign.create({
-        data: {
+      const {
           userId,
           audiencefileId,
           campaignName,
           campaignType,
-          emailTemplate, // Optional
           subject,
           emailBody,
           targetAudience,
-          recurringCampaign: recurringCampaign || false, // Default to false if not provided
-          scheduleCampaign: scheduleCampaign ? new Date(scheduleCampaign) : null,
-          endDate: endDate ? new Date(endDate) : null,
-        },
+          recurringCampaign,
+          scheduleCampaign,
+          endDate,
+      } = await request.json();
+
+      // Validate required fields
+      if (
+          !userId ||
+          !audiencefileId ||
+          !campaignName ||
+          !campaignType ||
+          !subject ||
+          !emailBody ||
+          !targetAudience
+      ) {
+          return NextResponse.json(
+              { error: 'Missing required fields.' },
+              { status: 400 }
+          );
+      }
+
+      // Create campaign without tracking
+      const campaign = await prisma.campaign.create({
+          data: {
+              userId,
+              audiencefileId,
+              campaignName,
+              campaignType,
+              subject,
+              emailBody,
+              targetAudience,
+              recurringCampaign: recurringCampaign || false,
+              scheduleCampaign: scheduleCampaign ? new Date(scheduleCampaign) : null,
+              endDate: endDate ? new Date(endDate) : null,
+              // openedRecipients: [] // Initialize as an empty array
+
+          },
       });
 
-      // Create a DeviceTracking entry associated with the campaign
-      const deviceTracking = await prisma.deviceTracking.create({
-        data: {
-          userId,
-          campaignId: campaign.id, // Link the campaign with the device tracking entry
-          campaignType,
-          smartphone: 0, // Initialize tracking fields to 0
-          desktopLaptop: 0,
-          tablet: 0,
-          smartwatch: 0,
-        },
-      });
-
-      const trackingIDs = await prisma.campaignTracking.create({
-            data: {
-                campaignId: campaign.id,
-                userId, // The user who sent the campaign
-                trackingIds: newTrackingIds, // The list of tracking IDs
-            },
-        });
-
-      return NextResponse.json({ campaign, deviceTracking, trackingIDs }, { status: 201 });
-    });
-
-    
-
-    // Return success response with the new campaign and device tracking details
-    return NextResponse.json(newCampaign, { status: 201 });
+      return NextResponse.json({ campaignId: campaign.id, userId }, { status: 201 });
   } catch (error) {
-    console.error('Error creating campaign and device tracking:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    );
+      console.error('Error creating campaign:', error);
+      return NextResponse.json(
+          { error: 'Internal Server Error' },
+          { status: 500 }
+      );
   }
-}
+} 
+
 export async function GET(request: Request) {
   console.log('GET request received:', request.url);
   const { searchParams } = new URL(request.url);

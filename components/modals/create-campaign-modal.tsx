@@ -12,8 +12,7 @@ const CreateCampaignModal: React.FC<CreateCampaignModalProps> = ({ isOpen, onClo
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <CreateCampaign onCreate={onClose} />
-
-        </Modal>
+       </Modal> 
     );
 };
 

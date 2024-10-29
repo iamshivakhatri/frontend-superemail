@@ -57,6 +57,12 @@ model Campaign {
   opened    Int? // Number of emails opened
   clicked   Int? // Number of clicks on the campaign emails
 
+    // New field for tracking unique opened recipients
+
+  openedRecipients String[]
+
+
+
   // Relations
   user           User             @relation(fields: [userId], references: [id]) // Relation to User
   audiencefile   Audiencefile     @relation(fields: [audiencefileId], references: [id]) // Relation to Audiencefile

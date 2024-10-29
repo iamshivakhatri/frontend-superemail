@@ -20,6 +20,7 @@ import SuccessModal from '@/components/SuccessModal'
 import { getInitialsFromEmail } from '@/utils/stringUtils';
 import axios from 'axios';
 import { useAuth } from "@/context/auth-provider";
+import { toast } from 'react-hot-toast';
 
 const emailTemplates = [
   { id: 1, name: "Welcome Email", subject: "Welcome to Our Service!", body: "Dear [Name],\n\nWelcome to our service! We're excited to have you on board..." },
@@ -145,56 +146,71 @@ export default function CreateCampaign({onCreate}:{onCreate:()=>void}) {
   
           const audiencefileId = audienceResponse.data.audiencefileId;
 
-          console.log("recipients", csvData)
-          console.log("subject", subject)
-          console.log("body", body)
-          console.log("userEmail", userEmail)
-          console.log("tokens", tokens)
-  
-          // Send emails
-          const emailResponse = await axios.post('https://emailapp-backend.onrender.com/auth/send-email', {
-              recipients: csvData,
-              subject,
-              body,
-              userEmail,
-              tokens,
-          });
-  
-          console.log('Emails sent successfully:', emailResponse.data);
-          
-          // Store tracking IDs
-          const newTrackingIds = emailResponse.data.info.map((item: any) => item.trackingId);
-          setTrackingIds(newTrackingIds);
-  
-          // Save the campaign
+          console.log("recipients", csvData);
+          console.log("subject", subject);
+          console.log("body", body);
+          console.log("userEmail", userEmail);
+          console.log("tokens", tokens);
+
+          // Create the campaign first
           const campaignResponse = await axios.post('/api/campaign', {
               userId, // Assuming userId is defined in your component
               audiencefileId,
               campaignName,
               campaignType,
               endDate: endDate ? new Date(endDate).toISOString() : null,
-              scheduleCampaign: null, // Update this if you have scheduling logic
               recurringCampaign: isRecurring, // Assuming isRecurring is defined in your component
-              emailTemplate: null, // If you have an email template, pass it here
               subject,
               emailBody: body,
               targetAudience,
+          });
+
+          if (campaignResponse.status !== 201) {
+              throw new Error(`Error creating campaign: ${campaignResponse.status}`);
+          }
+
+          // Extract campaignId for the next requests
+          const { campaignId } = campaignResponse.data;
+
+          // Send emails with campaignId and userId
+          const emailResponse = await axios.post('https://backend-superemail.onrender.com/auth/send-email', {
+              recipients: csvData,
+              subject,
+              body,
+              userEmail,
+              tokens,
+              campaignId,
+              userId,
+          });
+
+          console.log('Emails sent successfully:', emailResponse.data);
+
+          // Store tracking IDs and device info
+          const newTrackingIds = emailResponse.data.info.map((item:any) => item.trackingId);
+          setTrackingIds(newTrackingIds);
+
+          const trackingResponse = await axios.post('/api/addTrackingAndDeviceInfo', {
+              campaignId,
+              userId,
               newTrackingIds,
           });
 
-  
-          if (campaignResponse.status !== 201) {
-              throw new Error(`Error saving campaign: ${campaignResponse.status}`);
+          if (trackingResponse.status !== 201) {
+              throw new Error(`Error saving tracking info: ${trackingResponse.status}`);
           }
 
-  
-          // setModalMessage(`Campaign "${campaignName}" created and ${emailResponse.data.info.length} emails sent successfully!`);
-          setIsModalOpen(true);
+          // Success modal
+          // setIsModalOpen(true);
+
+          toast.success('Campaign created and emails sent successfully!');
+
       } catch (error) {
           console.error('Error saving campaign and sending emails:', error);
-          setModalMessage(`Error creating campaign and sending emails: ${error instanceof Error ? error.message : 'Unknown error'}`);
-          setTitle('Error');
-          setIsModalOpen(true);
+          toast.error(`Error creating campaign and sending emails: ${error instanceof Error ? error.message : 'Unknown error'}`);
+
+          // setModalMessage(`Error creating campaign and sending emails: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          // setTitle('Error');
+          // setIsModalOpen(true);
           onCreate();
       }
   };
