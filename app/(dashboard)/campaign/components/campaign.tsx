@@ -2,17 +2,12 @@
 
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts'
 import { ArrowUpRight, Bell, Calendar, Clock, HelpCircle, LayoutDashboard, Mail, Moon, MoreVertical, Plus, Search, Menu, Sun, Loader } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import Link from 'next/link'
 import { getInitialsFromEmail } from '@/utils/stringUtils';
-import EmailTrackingStats from '@/components/EmailTrackingStats';
 import { useAuth } from '@/context/auth-provider'
 import axios from 'axios';
 import CampaignCard from '@/components/campaign-card';
@@ -45,35 +40,35 @@ const CampaignDashboard = () => {
     document.documentElement.classList.toggle('dark');
   };
 
+  const loadCampaigns = async () => {
+    setIsLoading(false); // Set loading state to true before fetching
+
+    try {
+      // Fetch campaigns from the API using the userId
+      console.log('userId before get request', userId);
+      const response = await axios.get("/api/campaign", {
+        params: {
+          userId: userId,
+        },
+      });
+
+      console.log('response', response.data);
+      // Set the retrieved campaigns in state
+      setCampaigns(response.data);
+
+    } catch (error) {
+      console.error('Error loading campaigns:', error);
+      // Optionally handle error state here (e.g., show a message to the user)
+    } finally {
+      setIsLoading(false); // Set loading state to false after fetching
+    }
+  };
+
   // Effect to load campaigns when component mounts
   useEffect(() => {
     if (!userId) {
       return; // Exit early if userId is not available
     }
-
-    const loadCampaigns = async () => {
-      setIsLoading(false); // Set loading state to true before fetching
-
-      try {
-        // Fetch campaigns from the API using the userId
-        console.log('userId before get request', userId);
-        const response = await axios.get("/api/campaign", {
-          params: {
-            userId: userId,
-          },
-        });
-
-        console.log('response', response.data);
-        // Set the retrieved campaigns in state
-        setCampaigns(response.data);
-
-      } catch (error) {
-        console.error('Error loading campaigns:', error);
-        // Optionally handle error state here (e.g., show a message to the user)
-      } finally {
-        setIsLoading(false); // Set loading state to false after fetching
-      }
-    };
 
     loadCampaigns();
 
@@ -100,8 +95,8 @@ const CampaignDashboard = () => {
   }
 
   const handleClose = () => {
-    console.log('Close modal');
     setIsOpen(false)
+    loadCampaigns();
   }
 
   return (

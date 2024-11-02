@@ -17,8 +17,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={onChange}>
-            <DialogContent
-                className="w-[50vw] h-[90vh] max-w-none" // Set custom width and height here
+            <DialogContent className="w-[50vw] h-[90vh] max-w-none" 
             >
                 {children}
             </DialogContent>

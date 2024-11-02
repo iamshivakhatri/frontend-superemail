@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useAuth } from "@/context/auth-provider" 
+import CreateCampaign from '@/components/create-campaign';
 
 const UserProfile: React.FC = () => {
   const { userId, userEmail, userProfilePic, userName, isLoggedIn } = useAuth();
@@ -9,19 +10,9 @@ const UserProfile: React.FC = () => {
 
   return (
     <div>
-      {isLoggedIn ? (
-        <div>
-          <h1>User Profile</h1>
-          <p><strong>Name:</strong> {userName}</p>
-          <p><strong>Email:</strong> {userEmail}</p>
-          <img src={userProfilePic ?? 'default-pic-url'} alt="Profile" style={{ width: '100px', height: '100px' }} />
-          <p><strong>User ID:</strong> {userId}</p>
-        </div>
-      ) : (
-        <p>Please log in to see your profile information.</p>
-      )}
+      Test page.
     </div>
-  );
+    );
 };
 
 export default UserProfile;
