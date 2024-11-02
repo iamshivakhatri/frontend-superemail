@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowUpRight, Bell, Calendar, Clock, HelpCircle, LayoutDashboard, Mail, Moon, MoreVertical, Plus, Search, Menu, Sun, Loader } from 'lucide-react'
+import { Bell, LayoutDashboard, Moon,  Plus, Search, Menu, Sun, Loader } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -180,7 +180,7 @@ const CampaignDashboard = () => {
                     campaign={campaign} 
                     onClick={() => handleCampaignClick(campaign)}
                   />
-                ))
+                )).reverse()
               ) : (
                 <p className="text-center text-gray-500 dark:text-gray-400">No campaigns found. Create your first campaign now!</p>
               )}

@@ -39,8 +39,6 @@ model Campaign {
   emailTemplate     String? // Email template used for the campaign (optional)
   subject           String // Subject of the campaign email
   emailBody         String // Body content of the campaign email
-  targetAudience    String // Target audience description
-  recurringCampaign Boolean // Whether the campaign is recurring or not
   scheduleCampaign  DateTime? // Scheduled time for the campaign (optional)
   endDate           DateTime? // End date of the campaign (optional)
 

@@ -1,18 +1,11 @@
-'use client';
+import React from 'react'
 
-import React from 'react';
-import { useAuth } from "@/context/auth-provider" 
-import CreateCampaign from '@/components/create-campaign';
+type Props = {}
 
-const UserProfile: React.FC = () => {
-  const { userId, userEmail, userProfilePic, userName, isLoggedIn } = useAuth();
-  console.log(isLoggedIn);
-
+const page = (props: Props) => {
   return (
-    <div>
-      Test page.
-    </div>
-    );
-};
+    <div>page</div>
+  )
+}
 
-export default UserProfile;
+export default page
