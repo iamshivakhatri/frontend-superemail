@@ -39,8 +39,7 @@ model Campaign {
   emailTemplate     String? // Email template used for the campaign (optional)
   subject           String // Subject of the campaign email
   emailBody         String // Body content of the campaign email
-  scheduleCampaign  DateTime? // Scheduled time for the campaign (optional)
-  endDate           DateTime? // End date of the campaign (optional)
+  sendDate           DateTime? // End date of the campaign (optional)
 
   userId         String @db.ObjectId // Foreign key to the User model
   audiencefileId String @db.ObjectId // Foreign key to the Audiencefile model

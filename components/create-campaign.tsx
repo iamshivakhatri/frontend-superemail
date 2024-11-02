@@ -121,6 +121,19 @@ export default function CreateCampaign({ onCreate }: { onCreate: () => void }) {
     }
   };
 
+  const mergeDateTime = (sendtime: Date | undefined, senddate: Date | undefined): Date | undefined => {
+    if (!sendtime || !senddate) {
+      return undefined; // Return undefined if either is not provided
+    }
+  
+    // Create a new Date object with the date from senddate and the time from sendtime
+    const mergedDateTime = new Date(senddate);
+    mergedDateTime.setHours(sendtime.getHours(), sendtime.getMinutes(), sendtime.getSeconds(), sendtime.getMilliseconds());
+  
+    return mergedDateTime;
+  };
+  
+
   // Validate time when the user tries to change tabs
     useEffect(() => {
       if (activeTab !== "details") {
@@ -133,17 +146,29 @@ export default function CreateCampaign({ onCreate }: { onCreate: () => void }) {
     }, [activeTab, timeError]);
 
     const validateTimeSelection = (newDate: string | number | Date) => {
-      const now = new Date();
-      const selectedTime = new Date(newDate);
-    
-      // Check if the selected date is today
+
+      if (isNowChecked) {
+        return true; // No need to validate if "Now" is checked
+      }
+
       const today = new Date();
       today.setHours(0, 0, 0, 0); // Set time to the start of today
-    
-      // If the selected date is not today, return true
-      if (selectedTime.getTime() >= today.getTime() + 86400000) { // 86400000ms in a day
+
+      // Check if senddate is today or in the future (tomorrow or later)
+      if (senddate && senddate.getTime() >= today.getTime() + 86400000) { // 86400000ms in a day
         return true; // Future date, no error
       }
+
+
+
+      const now = new Date();
+      const selectedTime = new Date(newDate);
+      console.log('selectedTime', selectedTime);
+      console.log('now', now);
+    
+      // Check if the selected date is today
+    
+      
     
       // If it is today, apply your existing logic
       // Check if selected time is earlier than now
@@ -237,6 +262,12 @@ export default function CreateCampaign({ onCreate }: { onCreate: () => void }) {
       setIsLoading(false);
       return;
     }
+    const mergedDateTime = mergeDateTime(sendtime, senddate);
+
+
+  
+
+
 
     // Check if all required fields are filled
     if (
@@ -248,7 +279,7 @@ export default function CreateCampaign({ onCreate }: { onCreate: () => void }) {
       !sendtime ||
       csvData.length === 0
     ) {
-      toast.error("Please fill in all required fields and upload a CSV file.");
+      toast.error("Please fill in all required fields and upload a valid CSV file.");
       setIsLoading(false);
       return;
     }
@@ -272,16 +303,25 @@ export default function CreateCampaign({ onCreate }: { onCreate: () => void }) {
 
       const audiencefileId = audienceResponse.data.audiencefileId;
 
+      console.log("Campaign data ",{
+        userId,
+        audiencefileId,
+        campaignName,
+        campaignType,
+        subject,
+        body,
+        sendDate: mergedDateTime ? new Date(senddate).toISOString() : null,
+      })
+
       // Create the campaign first
       const campaignResponse = await axios.post("/api/campaign", {
         userId,
         audiencefileId,
         campaignName,
         campaignType,
-        senddate: senddate ? new Date(senddate).toISOString() : null,
+        sendDate: mergedDateTime ? new Date(senddate).toISOString() : null,
         subject,
         emailBody: body,
-        targetAudience,
       });
 
       if (campaignResponse.status !== 201) {
@@ -291,19 +331,38 @@ export default function CreateCampaign({ onCreate }: { onCreate: () => void }) {
       // Extract campaignId for the next requests
       const { campaignId } = campaignResponse.data;
 
+      let emailPromise;
+      if (isNowChecked){
+        emailPromise = axios.post(
+          "https://backend-superemail.onrender.com/auth/send-email",
+          {
+            recipients: csvData,
+            subject,
+            body,
+            userEmail,
+            tokens,
+            campaignId,
+            userId,
+          }
+        );
+      }else{
+        emailPromise = axios.post(
+          "https://backend-superemail.onrender.com/auth/send-email",
+          {
+            recipients: csvData,
+            subject,
+            body,
+            userEmail,
+            tokens,
+            campaignId,
+            userId,
+            senddate: mergedDateTime ? new Date(senddate).toISOString() : null,
+          }
+        );
+      }
+
       // Create a promise to send emails
-      const emailPromise = axios.post(
-        "https://backend-superemail.onrender.com/auth/send-email",
-        {
-          recipients: csvData,
-          subject,
-          body,
-          userEmail,
-          tokens,
-          campaignId,
-          userId,
-        }
-      );
+      
 
       // Create a timeout promise to wait for 5 seconds
       const timeoutPromise = new Promise((_, reject) =>

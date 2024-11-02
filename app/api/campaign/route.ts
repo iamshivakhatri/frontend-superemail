@@ -1,65 +1,67 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prismadb'; // Adjust this path to where your Prisma instance is configured.
+import toast from 'react-hot-toast';
 
 
-export async function POST(request: Request){
+export async function POST(request: Request) {
   try {
-      const {
-          userId,
-          audiencefileId,
-          campaignName,
-          campaignType,
-          subject,
-          emailBody,
-          targetAudience,
-          recurringCampaign,
-          scheduleCampaign,
-          endDate,
-      } = await request.json();
+    const {
+      userId,
+      audiencefileId,
+      campaignName,
+      campaignType,
+      subject,
+      emailBody,
+      sendDate,
+    } = await request.json();
 
-      // Validate required fields
-      if (
-          !userId ||
-          !audiencefileId ||
-          !campaignName ||
-          !campaignType ||
-          !subject ||
-          !emailBody ||
-          !targetAudience
-      ) {
-          return NextResponse.json(
-              { error: 'Missing required fields.' },
-              { status: 400 }
-          );
-      }
-
-      // Create campaign without tracking
-      const campaign = await prisma.campaign.create({
-          data: {
-              userId,
-              audiencefileId,
-              campaignName,
-              campaignType,
-              subject,
-              emailBody,
-              targetAudience,
-              recurringCampaign: recurringCampaign || false,
-              scheduleCampaign: scheduleCampaign ? new Date(scheduleCampaign) : null,
-              endDate: endDate ? new Date(endDate) : null,
-              // openedRecipients: [] // Initialize as an empty array
-
-          },
-      });
-
-      return NextResponse.json({ campaignId: campaign.id, userId }, { status: 201 });
-  } catch (error) {
-      console.error('Error creating campaign:', error);
+    // Validate required fields
+    if (
+      !userId ||
+      !audiencefileId ||
+      !campaignName ||
+      !campaignType ||
+      !subject ||
+      !emailBody 
+    ) {
       return NextResponse.json(
-          { error: 'Internal Server Error' },
-          { status: 500 }
+        { error: 'Missing required fields.' },
+        { status: 400 }
       );
+    }
+
+    // Optional: Validate `sendDate` as a valid date if it's provided
+    const validSendDate = sendDate ? new Date(sendDate) : null;
+    if (validSendDate && isNaN(validSendDate.getTime())) {
+      toast.error('Invalid sendDate format.');
+      return NextResponse.json(
+        { error: 'Invalid sendDate format.' },
+        { status: 400 }
+      );
+    }
+
+    // Create campaign in the database
+    const campaign = await prisma.campaign.create({
+      data: {
+        userId,
+        audiencefileId,
+        campaignName,
+        campaignType,
+        subject,
+        emailBody,
+        sendDate: validSendDate,
+      },
+    });
+
+    return NextResponse.json({ campaignId: campaign.id, userId }, { status: 201 });
+  } catch (error) {
+    console.error('Error creating campaign:', error);
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
-} 
+}
 
 export async function GET(request: Request) {
   console.log('GET request received:', request.url);
