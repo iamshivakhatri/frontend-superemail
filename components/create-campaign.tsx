@@ -218,6 +218,7 @@ export default function CreateCampaign({ onCreate }: { onCreate: () => void }) {
       const storedTokens = localStorage.getItem("gmail_tokens");
       if (storedTokens) {
         const tokens = JSON.parse(storedTokens);
+        console.log("Tokens received while refreshing at create campaign :", tokens);
         try {
           const response = await fetch(
             "https://emailapp-backend.onrender.com/auth/user-info",
@@ -347,7 +348,7 @@ export default function CreateCampaign({ onCreate }: { onCreate: () => void }) {
         );
       }else{
         emailPromise = axios.post(
-          "https://backend-superemail.onrender.com/auth/send-email",
+          "https://backend-superemail.onrender.com/auth/schedule-email",
           {
             recipients: csvData,
             subject,

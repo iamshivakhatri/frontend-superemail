@@ -20,6 +20,7 @@ export default function AuthCallback() {
     }
 
     const tokens = JSON.parse(paramTokens);
+    console.log('Tokens received :', tokens);
   
     const storeUserInfo = async () => {
       try {
