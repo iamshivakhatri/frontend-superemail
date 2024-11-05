@@ -11,7 +11,6 @@ import StatCards from './stat-card';
 import EmailPerformanceTrends from './email-performance-trends'
 import DevicePerformance from './device-performance';
 import { Campaign } from '@prisma/client';
-import { set } from 'date-fns';
 import { useAuth } from "@/context/auth-provider" 
 
 
@@ -192,8 +191,7 @@ const Dashboard = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <EmailPerformanceTrends campaigns={updatedCampaigns} />
-
-             <DevicePerformance campaigns = {updatedCampaigns} />
+              <DevicePerformance campaigns = {updatedCampaigns} />
             </div>
           </div>
         </main>

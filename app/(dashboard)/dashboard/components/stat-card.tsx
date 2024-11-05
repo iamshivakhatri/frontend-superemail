@@ -58,13 +58,13 @@ const StatCards: React.FC<{ campaigns: any[] }> = ({ campaigns }) => {
         subtext={`${totalOpened} Opened`}
         icon={<ArrowUpRight className="h-4 w-4 ml-1" />} 
       />
-      <StatCard 
+      {/* <StatCard 
         title="Click Rate" 
         value={`${clickRate}%`}
         // change="-2.3%" 
         subtext={`${totalClicked} Clicked`}
         icon={<ArrowUpRight className="h-4 w-4 ml-1" />} 
-      />
+      /> */}
       <StatCard 
         title="Delivered Rate" 
         value={`${deliveredRate}%`}
