@@ -1,53 +1,131 @@
+'use client'
+
+import { useEffect, useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, MessageSquare, PenSquare, Search, Settings } from "lucide-react"
+import {
+  Calendar,
+  MessageSquare,
+  PenSquare,
+  Search,
+  Settings,
+  MoreVertical,
+  Mail,
+  FileText,
+  Twitter
+} from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export default function Component() {
+  const [selectedEmailIndex, setSelectedEmailIndex] = useState<number>(-1)
+  const [isEmailOpen, setIsEmailOpen] = useState(false)
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        setSelectedEmailIndex(prev => 
+          prev < emails.length - 1 ? prev + 1 : prev
+        )
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        setSelectedEmailIndex(prev => 
+          prev > 0 ? prev - 1 : prev
+        )
+      } else if (e.key === ' ' && selectedEmailIndex !== -1) {
+        e.preventDefault()
+        setIsEmailOpen(!isEmailOpen)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedEmailIndex, isEmailOpen])
+
   return (
     <div className="flex h-screen bg-background">
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Top Navigation */}
         <header className="border-b px-6 py-3">
-          <Tabs defaultValue="inbox" className="w-full">
-            <TabsList className="gap-2">
-              <TabsTrigger value="inbox" className="text-sm">
-                Inbox <Badge variant="secondary" className="ml-2">7</Badge>
-              </TabsTrigger>
-              <TabsTrigger value="product" className="text-sm">
-                Product <Badge variant="secondary" className="ml-2">3</Badge>
-              </TabsTrigger>
-              <TabsTrigger value="pitch-decks" className="text-sm">
-                Pitch Decks <Badge variant="secondary" className="ml-2">1</Badge>
-              </TabsTrigger>
-              <TabsTrigger value="investors" className="text-sm">
-                Investors <Badge variant="secondary" className="ml-2">5</Badge>
-              </TabsTrigger>
-            </TabsList>
-            <div className="ml-auto flex items-center gap-2">
-              <Button variant="ghost" size="icon">
-                <PenSquare className="h-4 w-4" />
-                <span className="sr-only">Compose</span>
-              </Button>
-              <Button variant="ghost" size="icon">
-                <Search className="h-4 w-4" />
-                <span className="sr-only">Search</span>
-              </Button>
-            </div>
-          </Tabs>
+          <div className="flex items-center">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="mr-4">
+                  <MoreVertical className="h-4 w-4" />
+                  <span className="sr-only">Menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem>Settings</DropdownMenuItem>
+                <DropdownMenuItem>Keyboard Shortcuts</DropdownMenuItem>
+                <DropdownMenuItem>Help & Feedback</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            <Tabs defaultValue="important" className="w-full">
+              <TabsList className="gap-2">
+                <TabsTrigger value="important" className="text-sm">
+                  Important <Badge variant="secondary" className="ml-2">4</Badge>
+                </TabsTrigger>
+                <TabsTrigger value="notifications" className="text-sm">
+                  Notifications
+                </TabsTrigger>
+                <TabsTrigger value="support" className="text-sm">
+                  Support
+                </TabsTrigger>
+                <TabsTrigger value="team" className="text-sm">
+                  Team Blocking <Badge variant="secondary" className="ml-2">1</Badge>
+                </TabsTrigger>
+                <TabsTrigger value="vc" className="text-sm">
+                  VC <Badge variant="secondary" className="ml-2">3</Badge>
+                </TabsTrigger>
+                <TabsTrigger value="applications" className="text-sm">
+                  Applications <Badge variant="secondary" className="ml-2">201</Badge>
+                </TabsTrigger>
+                <TabsTrigger value="other" className="text-sm">
+                  Other
+                </TabsTrigger>
+              </TabsList>
+              <div className="ml-auto flex items-center gap-2">
+                <Button variant="ghost" size="icon">
+                  <PenSquare className="h-4 w-4" />
+                  <span className="sr-only">Compose</span>
+                </Button>
+                <Button variant="ghost" size="icon">
+                  <Search className="h-4 w-4" />
+                  <span className="sr-only">Search</span>
+                </Button>
+              </div>
+            </Tabs>
+          </div>
         </header>
 
         {/* Email List */}
         <ScrollArea className="flex-1">
           <div className="divide-y">
-            {emails.map((email) => (
+            {emails.map((email, index) => (
               <div
                 key={email.id}
-                className="flex items-center gap-4 px-6 py-3 hover:bg-muted/50 cursor-pointer group"
+                className={`flex items-center gap-4 px-6 py-3 hover:bg-muted/50 cursor-pointer group ${
+                  selectedEmailIndex === index ? 'bg-muted' : ''
+                }`}
+                onClick={() => {
+                  setSelectedEmailIndex(index)
+                  setIsEmailOpen(true)
+                }}
+                role="button"
+                tabIndex={0}
+                aria-selected={selectedEmailIndex === index}
               >
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={email.avatar} alt={email.sender} />
@@ -57,7 +135,7 @@ export default function Component() {
                   <div className="flex items-center gap-2">
                     <span className="font-semibold">{email.sender}</span>
                     {email.badge && (
-                      <Badge variant="secondary" className="bg-pink-100 text-pink-700">
+                      <Badge variant="secondary" className="bg-blue-100 text-blue-700">
                         {email.badge}
                       </Badge>
                     )}
@@ -92,50 +170,42 @@ export default function Component() {
       <Card className="w-80 border-l rounded-none p-6">
         <div className="flex flex-col items-center text-center">
           <Avatar className="h-20 w-20 mb-4">
-            <AvatarImage src="/placeholder.svg" alt="Laura Shea" />
-            <AvatarFallback>LS</AvatarFallback>
+            <AvatarImage src="/placeholder.svg" alt="Alex Bass" />
+            <AvatarFallback>AB</AvatarFallback>
           </Avatar>
-          <h2 className="font-semibold text-lg">Laura Shea</h2>
-          <p className="text-sm text-muted-foreground mb-2">laura@ventures.com</p>
+          <h2 className="font-semibold text-lg">Alex Bass</h2>
+          <p className="text-sm text-muted-foreground mb-2">alex@example.com</p>
           <p className="text-sm text-muted-foreground">San Francisco</p>
         </div>
 
         <div className="mt-6 space-y-4">
           <div className="space-y-2">
-            <h3 className="text-sm font-medium">About</h3>
-            <p className="text-sm text-muted-foreground">
-              Early stage VC focused on dormant but massive markets
-            </p>
+            <h3 className="text-sm font-medium">Recent Opens</h3>
+            <div className="space-y-2">
+              {recentOpens.map((item, index) => (
+                <div key={index} className="text-sm">
+                  <p className="font-medium">{item.sender}</p>
+                  <p className="text-muted-foreground">{item.subject}</p>
+                  <p className="text-xs text-muted-foreground">{item.time}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="space-y-2">
-            <h3 className="text-sm font-medium">Social</h3>
+            <h3 className="text-sm font-medium">Quick Actions</h3>
             <div className="flex flex-col gap-2">
               <Button variant="outline" className="justify-start">
-                <svg
-                  className="mr-2 h-4 w-4"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M20.47 2H3.53a1.45 1.45 0 0 0-1.47 1.43v17.14A1.45 1.45 0 0 0 3.53 22h16.94a1.45 1.45 0 0 0 1.47-1.43V3.43A1.45 1.45 0 0 0 20.47 2ZM8.09 18.74h-3v-9h3ZM6.59 8.48a1.56 1.56 0 1 1 0-3.12 1.57 1.57 0 1 1 0 3.12Zm12.32 10.26h-3v-4.83c0-1.21-.43-2-1.52-2A1.65 1.65 0 0 0 12.85 13a2 2 0 0 0-.1.73v5h-3v-9h3V11a3 3 0 0 1 2.71-1.5c2 0 3.45 1.29 3.45 4.06Z" />
-                </svg>
-                LinkedIn
+                <Mail className="mr-2 h-4 w-4" />
+                Compose Email
               </Button>
               <Button variant="outline" className="justify-start">
-                <svg
-                  className="mr-2 h-4 w-4"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.5 0-1.96.93-1.96 1.89v2.26h3.32l-.53 3.5h-2.8V24C19.62 23.1 24 18.1 24 12.07" />
-                </svg>
-                Facebook
+                <FileText className="mr-2 h-4 w-4" />
+                Create Document
               </Button>
               <Button variant="outline" className="justify-start">
-                <Settings className="mr-2 h-4 w-4" />
-                AngelList
+                <Twitter className="mr-2 h-4 w-4" />
+                Share on Twitter
               </Button>
             </div>
           </div>
@@ -148,12 +218,12 @@ export default function Component() {
 const emails = [
   {
     id: 1,
-    sender: "Laura Shea",
-    subject: "Closing our deal",
-    preview: "This is a snippet of text, it'll show a preview of content inside...",
-    date: "MAY 13",
+    sender: "Alex Bass",
+    subject: "Superhuman Screen Recordings",
+    preview: "Hey Andra, We need to work on the screen recordings for the Superhuman...",
+    date: "33 mins ago",
     avatar: "/placeholder.svg",
-    badge: "superhuman"
+    badge: "team"
   },
   {
     id: 2,
@@ -186,5 +256,28 @@ const emails = [
     preview: "You have been invited to the following event. Mo...",
     date: "MAY 12",
     avatar: "/placeholder.svg"
+  }
+]
+
+const recentOpens = [
+  {
+    sender: "Andriy Zapisotskyi",
+    subject: "Re: Connecting Andriy of Growthmate.io with Alex...",
+    time: "33 mins ago"
+  },
+  {
+    sender: "Siddharth Janghu",
+    subject: "Re: Akiflow Partnership <> Efficient App",
+    time: "46 mins ago"
+  },
+  {
+    sender: "Jasmine Jones",
+    subject: "Re: Introduction to 02/20 Dashlane Webinar",
+    time: "Yesterday"
+  },
+  {
+    sender: "Steve Holm",
+    subject: "Appreciating The Product-Focused Direction!",
+    time: "Yesterday"
   }
 ]
