@@ -27,12 +27,12 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <div className={`flex h-screen ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-      <Sidebar
+      {/* <Sidebar
         darkMode={darkMode}
         toggleDarkMode={toggleDarkMode}
         isMobileMenuOpen={isMobileMenuOpen}
         setIsMobileMenuOpen={setIsMobileMenuOpen}
-      />
+      /> */}
       <main className="flex-1 overflow-y-auto">
         {children}
       </main>
