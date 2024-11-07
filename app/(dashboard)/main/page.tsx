@@ -11,21 +11,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 
 import {
-
-    Gift,
-    ChevronRight,
-
-    HelpCircle,
-    LineChart,
-    Loader2,
-
-    MenuIcon,
-
-    User2,
-    Users,
-
-    Zap,
-  } from "lucide-react";
+  Gift,
+  ChevronRight,
+  HelpCircle,
+  LineChart,
+  Loader2,
+  MenuIcon,
+  User2,
+  Users,
+  Zap,
+} from "lucide-react";
 
 import {
   ArrowLeft,
@@ -73,13 +68,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import { cn } from "@/lib/utils";
-import {
-    Archive,
-    Inbox,
-    Star } from "lucide-react"
+import { Archive, Inbox, Star } from "lucide-react";
 
 export default function Component() {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [draftContent, setDraftContent] = useState(`Dear Jakes,
 
@@ -116,8 +108,8 @@ export default function Component() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [showFooter, setShowFooter] = useState(true);
 
-  const [selectedItem, setSelectedItem] = useState("inbox")
-
+  const [selectedItem, setSelectedItem] = useState("inbox");
+  const [showSettings, setShowSettings] = useState(false);
 
   const handleClick = () => {
     setIsComposeOpen(true); // Open compose section
@@ -197,151 +189,159 @@ export default function Component() {
             </DropdownMenu> */}
 
             <div className="relative">
-                {/* Button to toggle sidebar */}
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="mr-4"
-                    onClick={() => setIsSidebarOpen(true)}
+              {/* Button to toggle sidebar */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="mr-4"
+                onClick={() => setIsSidebarOpen(true)}
+              >
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Menu</span>
+              </Button>
+
+              {/* Sidebar */}
+              {isSidebarOpen && (
+                <div
+                  className={`z-40 shadow-lg absolute top-0 left-[-20px] w-80 h-screen bg-white flex flex-col transition-all duration-200 ${
+                    isSidebarOpen ? "block" : "hidden"
+                  }`}
+                  onMouseLeave={() => setIsSidebarOpen(false)} // Close on mouse leave
                 >
-                    <Menu className="h-6 w-6" />
-                    <span className="sr-only">Menu</span>
-                </Button>
-
-                {/* Sidebar */}
-                {isSidebarOpen && (
-                        <div
-                        className={`z-40 shadow-lg absolute top-0 left-[-20px] w-80 h-screen bg-white flex flex-col transition-all duration-200 ${
-                          isSidebarOpen ? 'block' : 'hidden'
-                        }`}
-                        onMouseLeave={() => setIsSidebarOpen(false)} // Close on mouse leave
-                      >
-                    {/* Profile Section */}
-                    <div className="p-4 flex items-center gap-3">
-                      <div className="relative">
-                        <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-violet-100 to-violet-50 flex items-center justify-center">
-                          <img
-                            src="/placeholder.svg"
-                            alt="Profile"
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white bg-green-500" />
+                  {/* Profile Section */}
+                  <div className="p-4 flex items-center gap-3">
+                    <div className="relative">
+                      <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-violet-100 to-violet-50 flex items-center justify-center">
+                        <img
+                          src="/placeholder.svg"
+                          alt="Profile"
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-zinc-900 truncate">
-                          shiva.khatri0001@gmail.com
-                        </p>
-                      </div>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500">
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
+                      <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white bg-green-500" />
                     </div>
-              
-                    {/* Navigation */}
-                    <ScrollArea className="flex-1 px-2">
-                      <div className="space-y-1">
-                        {/* Primary Navigation */}
-                        <div className="flex items-center gap-2 px-2 py-1">
-                          <span className="text-sm font-medium">Inbox</span>
-                          <span className="text-xs text-zinc-500">·</span>
-                          <span className="text-sm text-zinc-500">Important</span>
-                          <span className="text-xs text-zinc-500">·</span>
-                          <span className="text-sm text-zinc-500">Other</span>
-                          <span className="ml-auto text-sm text-zinc-500">925</span>
-                        </div>
-              
-                        {/* Main Navigation Items */}
-                        <NavigationItem
-                          icon={Star}
-                          label="Starred"
-                          isSelected={selectedItem === "starred"}
-                          onClick={() => setSelectedItem("starred")}
-                          shortcut={
-                            <div className="flex gap-1">
-                              <kbd className="px-1.5 py-0.5 text-xs bg-zinc-100 rounded">G</kbd>
-                              <span className="text-xs text-zinc-500">then</span>
-                              <kbd className="px-1.5 py-0.5 text-xs bg-zinc-100 rounded">S</kbd>
-                            </div>
-                          }
-                        />
-                        <NavigationItem
-                          icon={FileText}
-                          label="Drafts"
-                          isSelected={selectedItem === "drafts"}
-                          onClick={() => setSelectedItem("drafts")}
-                        />
-                        <NavigationItem
-                          icon={Send}
-                          label="Sent Mail"
-                          isSelected={selectedItem === "sent"}
-                          onClick={() => setSelectedItem("sent")}
-                        />
-                        <NavigationItem
-                          icon={Archive}
-                          label="Done"
-                          isSelected={selectedItem === "done"}
-                          onClick={() => setSelectedItem("done")}
-                        />
-                        <NavigationItem
-                          icon={Calendar}
-                          label="Scheduled"
-                          isSelected={selectedItem === "scheduled"}
-                          onClick={() => setSelectedItem("scheduled")}
-                        />
-                        <NavigationItem
-                          icon={Calendar}
-                          label="Reminders"
-                          isSelected={selectedItem === "reminders"}
-                          onClick={() => setSelectedItem("reminders")}
-                        />
-                        <NavigationItem
-                          icon={MessageSquare}
-                          label="Snippets"
-                          isSelected={selectedItem === "snippets"}
-                          onClick={() => setSelectedItem("snippets")}
-                        />
-                        <NavigationItem
-                          icon={Mail}
-                          label="Spam"
-                          isSelected={selectedItem === "spam"}
-                          onClick={() => setSelectedItem("spam")}
-                        />
-                        <NavigationItem
-                          icon={Trash2}
-                          label="Trash"
-                          isSelected={selectedItem === "trash"}
-                          onClick={() => setSelectedItem("trash")}
-                        />
-                        <NavigationItem
-                          icon={Mail}
-                          label="[Imap]"
-                          isSelected={selectedItem === "imap"}
-                          onClick={() => setSelectedItem("imap")}
-                        />
-                        <NavigationItem
-                          icon={FileText}
-                          label="Drafts"
-                          isSelected={selectedItem === "drafts2"}
-                          onClick={() => setSelectedItem("drafts2")}
-                        />
-                      </div>
-                    </ScrollArea>
-              
-                    {/* Settings */}
-                    <div className="p-4 border-t border-zinc-200">
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start gap-2 h-9 px-2"
-                      >
-                        <Settings className="h-4 w-4" />
-                        <span className="text-sm">Settings</span>
-                      </Button>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-zinc-900 truncate">
+                        shiva.khatri0001@gmail.com
+                      </p>
                     </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-zinc-500"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
                   </div>
-                )}
 
+                  {/* Navigation */}
+                  <ScrollArea className="flex-1 px-2">
+                    <div className="space-y-1">
+                      {/* Primary Navigation */}
+                      <div className="flex items-center gap-2 px-2 py-1">
+                        <span className="text-sm font-medium">Inbox</span>
+                        <span className="text-xs text-zinc-500">·</span>
+                        <span className="text-sm text-zinc-500">Important</span>
+                        <span className="text-xs text-zinc-500">·</span>
+                        <span className="text-sm text-zinc-500">Other</span>
+                        <span className="ml-auto text-sm text-zinc-500">
+                          925
+                        </span>
+                      </div>
 
+                      {/* Main Navigation Items */}
+                      <NavigationItem
+                        icon={Star}
+                        label="Starred"
+                        isSelected={selectedItem === "starred"}
+                        onClick={() => setSelectedItem("starred")}
+                        shortcut={
+                          <div className="flex gap-1">
+                            <kbd className="px-1.5 py-0.5 text-xs bg-zinc-100 rounded">
+                              G
+                            </kbd>
+                            <span className="text-xs text-zinc-500">then</span>
+                            <kbd className="px-1.5 py-0.5 text-xs bg-zinc-100 rounded">
+                              S
+                            </kbd>
+                          </div>
+                        }
+                      />
+                      <NavigationItem
+                        icon={FileText}
+                        label="Drafts"
+                        isSelected={selectedItem === "drafts"}
+                        onClick={() => setSelectedItem("drafts")}
+                      />
+                      <NavigationItem
+                        icon={Send}
+                        label="Sent Mail"
+                        isSelected={selectedItem === "sent"}
+                        onClick={() => setSelectedItem("sent")}
+                      />
+                      <NavigationItem
+                        icon={Archive}
+                        label="Done"
+                        isSelected={selectedItem === "done"}
+                        onClick={() => setSelectedItem("done")}
+                      />
+                      <NavigationItem
+                        icon={Calendar}
+                        label="Scheduled"
+                        isSelected={selectedItem === "scheduled"}
+                        onClick={() => setSelectedItem("scheduled")}
+                      />
+                      <NavigationItem
+                        icon={Calendar}
+                        label="Reminders"
+                        isSelected={selectedItem === "reminders"}
+                        onClick={() => setSelectedItem("reminders")}
+                      />
+                      <NavigationItem
+                        icon={MessageSquare}
+                        label="Snippets"
+                        isSelected={selectedItem === "snippets"}
+                        onClick={() => setSelectedItem("snippets")}
+                      />
+                      <NavigationItem
+                        icon={Mail}
+                        label="Spam"
+                        isSelected={selectedItem === "spam"}
+                        onClick={() => setSelectedItem("spam")}
+                      />
+                      <NavigationItem
+                        icon={Trash2}
+                        label="Trash"
+                        isSelected={selectedItem === "trash"}
+                        onClick={() => setSelectedItem("trash")}
+                      />
+                      <NavigationItem
+                        icon={Mail}
+                        label="[Imap]"
+                        isSelected={selectedItem === "imap"}
+                        onClick={() => setSelectedItem("imap")}
+                      />
+                      <NavigationItem
+                        icon={FileText}
+                        label="Drafts"
+                        isSelected={selectedItem === "drafts2"}
+                        onClick={() => setSelectedItem("drafts2")}
+                      />
+                    </div>
+                  </ScrollArea>
+
+                  {/* Settings */}
+                  <div className="p-4 border-t border-zinc-200">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start gap-2 h-9 px-2"
+                    >
+                      <Settings className="h-4 w-4" />
+                      <span className="text-sm">Settings</span>
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="flex-1 flex items-center">
@@ -391,7 +391,7 @@ export default function Component() {
                   </TabsList>
                 </Tabs>
               </div>
-              
+
               <div
                 className={`flex items-center gap-2 ${
                   isSearchExpanded ? "w-full" : ""
@@ -418,10 +418,10 @@ export default function Component() {
                 ) : (
                   <>
                     <Link href="/create" passHref>
-                    <Button variant="ghost" size="icon">
-                      <PenSquare className="h-6 w-6" />
-                      <span className="sr-only">Compose</span>
-                    </Button>
+                      <Button variant="ghost" size="icon">
+                        <PenSquare className="h-6 w-6" />
+                        <span className="sr-only">Compose</span>
+                      </Button>
                     </Link>
                     <Button
                       variant="ghost"
@@ -523,112 +523,114 @@ export default function Component() {
         </div>
 
         {/* Compose Button */}
-
-        
       </div>
 
       {/* Right Sidebar (Email Content) */}
       {/* Right Sidebar (Email Content) */}
-        {/* Right Sidebar (Email Content) */}
-{isEmailOpen && selectedEmailIndex !== -1 && (
-  <ScrollArea className={`w-80 border-l ${showFooter ? 'mb-5' : ''}`}>
-    <div className="p-4 flex flex-col justify-between h-full space-y-6">
-      
-      {/* Main Content */}
-      <div className="flex flex-col space-y-6 flex-grow">
+      {isEmailOpen &&
+        selectedEmailIndex !== -1 &&
+        (showSettings ? (
+          <div className="w-full max-w-2xl mx-auto bg-white min-h-screen transition-all duration-300"></div>
+        ) : (
+          <ScrollArea
+            className={`w-80 border-l ${
+              showSettings ? "mb-5" : ""
+            } transition-all duration-300`}
+          >
+            <div className="p-4 flex flex-col space-y-6  h-full justify-between">
+              {/* Personal Info */}
+              <div className="flex flex-col items-center text-center">
+                <Avatar className="h-12 w-12 mb-2">
+                  <AvatarImage src="/placeholder.svg" alt="AB" />
+                  <AvatarFallback>AB</AvatarFallback>
+                </Avatar>
+                <h2 className="font-semibold">Alex Bass</h2>
+                <p className="text-sm text-muted-foreground mb-2">Austin</p>
+                <p className="text-xs text-muted-foreground mb-4">
+                  contact@efficient.app
+                </p>
 
-        {/* Personal Info */}
-        <div className="flex flex-col items-center text-center">
-          <Avatar className="h-12 w-12 mb-2">
-            <AvatarImage src="/placeholder.svg" alt="AB" />
-            <AvatarFallback>AB</AvatarFallback>
-          </Avatar>
-          <h2 className="font-semibold">Alex Bass</h2>
-          <p className="text-sm text-muted-foreground mb-2">Austin</p>
-          <p className="text-xs text-muted-foreground mb-4">contact@efficient.app</p>
-          
-          <div className="flex gap-2 mb-4">
-            <Button variant="outline" size="sm" className="w-full">
-              <Linkedin className="h-4 w-4 mr-2" />
-              LinkedIn
-            </Button>
-            <Button variant="outline" size="sm" className="w-full">
-              <Github className="h-4 w-4 mr-2" />
-              GitHub
-            </Button>
-          </div>
-          
-          <Separator className="my-4" />
-          <p className="text-xs text-muted-foreground">Founder & Product at efficient.app</p>
-        </div>
+                <div className="flex gap-2 mb-4">
+                  <Button variant="outline" size="sm" className="w-full">
+                    <Linkedin className="h-4 w-4 mr-2" />
+                    LinkedIn
+                  </Button>
+                  <Button variant="outline" size="sm" className="w-full">
+                    <Github className="h-4 w-4 mr-2" />
+                    GitHub
+                  </Button>
+                </div>
 
-        {/* Summary Section */}
-        <div className="space-y-2">
-          <h2 className="font-semibold mb-2">Email Summary</h2>
-          <ul className="space-y-1 text-sm text-muted-foreground">
-            <li>• Response regarding Cloudflare caching services</li>
-            <li>• Milk Moon Studio specializes in Design and Webflow Development</li>
-            <li>• Refers to existing resources and documentation</li>
-            <li>• Suggests Zaraz integration for performance</li>
-          </ul>
-        </div>
+                <Separator className="my-4" />
+                <p className="text-xs text-muted-foreground">
+                  Founder & Product at efficient.app
+                </p>
+              </div>
 
-        {/* Draft Reply */}
-        <div className="space-y-2">
-          <h2 className="font-semibold mb-2">AI-Generated Draft</h2>
-          <Textarea
-            value={draftContent}
-            onChange={(e) => setDraftContent(e.target.value)}
-            className="min-h-[200px] mb-4"
-          />
-          <div className="flex items-center justify-between">
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm">
-                <Paperclip className="h-4 w-4 mr-2" />
-                Attach
-              </Button>
-              <Button variant="outline" size="sm">Edit</Button>
+              {/* Summary Section */}
+              <div className="space-y-2">
+                <h2 className="font-semibold mb-2">Email Summary</h2>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  <li>• Response regarding Cloudflare caching services</li>
+                  <li>
+                    • Milk Moon Studio specializes in Design and Webflow
+                    Development
+                  </li>
+                  <li>• Refers to existing resources and documentation</li>
+                  <li>• Suggests Zaraz integration for performance</li>
+                </ul>
+              </div>
+
+              {/* Draft Reply */}
+              <div className="space-y-2">
+                <h2 className="font-semibold mb-2">AI-Generated Draft</h2>
+                <Textarea
+                  value={draftContent}
+                  onChange={(e) => setDraftContent(e.target.value)}
+                  className="min-h-[200px] mb-4"
+                />
+                <div className="flex items-center justify-between">
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm">
+                      <Paperclip className="h-4 w-4 mr-2" />
+                      Attach
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      Edit
+                    </Button>
+                  </div>
+                  <Button>
+                    <Send className="h-4 w-4 mr-2" />
+                    Send
+                  </Button>
+                </div>
+              </div>
             </div>
-            <Button>
-              <Send className="h-4 w-4 mr-2" />
-              Send
-            </Button>
-          </div>
-        </div>
 
-      </div>
+            {/* Footer */}
+            <div className="p-4 border-t border-zinc-100 mt-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2 text-zinc-500">
+                  <span className="text-sm">My Team</span>
+                  <Users className="h-4 w-4" />
+                </div>
+                <div className="flex items-center space-x-4 text-zinc-400">
+                  <Zap className="h-4 w-4" />
+                  <Gift className="h-4 w-4" />
+                  <HelpCircle className="h-4 w-4" />
+                  <LineChart className="h-4 w-4" />
+                  <Settings
+                    className="h-4 w-4 cursor-pointer"
+                    onClick={() => setShowSettings(!showSettings)}
+                  />
+                </div>
+              </div>
+            </div>
+          </ScrollArea>
+        ))}
 
-      {/* Footer Section */}
-      <div className="p-4 border-t border-zinc-100 mt-6">
-        {/* <div className="flex items-center space-x-2 text-zinc-500 mb-4">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          <span className="text-sm">We'll let you know when it's ready!</span>
-        </div> */}
-        
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2 text-zinc-500">
-            <span className="text-sm">My Team</span>
-            <Users className="h-4 w-4" />
-          </div>
-          <div className="flex items-center space-x-4 text-zinc-400">
-            <Zap className="h-4 w-4" />
-            <Gift className="h-4 w-4" />
-            <HelpCircle className="h-4 w-4" />
-            <LineChart className="h-4 w-4" />
-            <Settings className="h-4 w-4" />
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </ScrollArea>
-)}
-
-
-
-
-       {/* Footer - Conditional */}
-       {showFooter && (
+      {/* Footer - Conditional */}
+      {showFooter && (
         <div className="fixed bottom-0 left-0 right-0 px-4 py-2 border-t border-zinc-100 bg-white flex items-center justify-between text-xs text-zinc-500">
           <div className="flex items-center space-x-4">
             <span>Hit</span>
@@ -650,33 +652,33 @@ export default function Component() {
 }
 
 function NavigationItem({
-    icon: Icon,
-    label,
-    shortcut,
-    isSelected,
-    onClick,
-  }: {
-    icon: any
-    label: string
-    shortcut?: React.ReactNode
-    isSelected?: boolean
-    onClick?: () => void
-  }) {
-    return (
-      <Button
-        variant="ghost"
-        className={cn(
-          "w-full justify-start gap-2 h-9 px-2 hover:bg-zinc-100 transition-colors",
-          isSelected && "bg-zinc-100 text-zinc-900"
-        )}
-        onClick={onClick}
-      >
-        <Icon className="h-4 w-4" />
-        <span className="flex-1 text-sm text-left">{label}</span>
-        {shortcut}
-      </Button>
-    )
-  }
+  icon: Icon,
+  label,
+  shortcut,
+  isSelected,
+  onClick,
+}: {
+  icon: any;
+  label: string;
+  shortcut?: React.ReactNode;
+  isSelected?: boolean;
+  onClick?: () => void;
+}) {
+  return (
+    <Button
+      variant="ghost"
+      className={cn(
+        "w-full justify-start gap-2 h-9 px-2 hover:bg-zinc-100 transition-colors",
+        isSelected && "bg-zinc-100 text-zinc-900"
+      )}
+      onClick={onClick}
+    >
+      <Icon className="h-4 w-4" />
+      <span className="flex-1 text-sm text-left">{label}</span>
+      {shortcut}
+    </Button>
+  );
+}
 
 const emails = [
   {
