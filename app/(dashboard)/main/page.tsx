@@ -7,10 +7,29 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea"
-import { ArrowLeft, ArrowUp, ArrowDown, Share2, Clock, Paperclip, Trash2, Github, Linkedin, Send } from 'lucide-react'
-import { Separator } from "@/components/ui/separator"
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 
+import {
+  ArrowLeft,
+  ArrowUp,
+  ArrowDown,
+  Share2,
+  Clock,
+  Paperclip,
+  Trash2,
+  Github,
+  Linkedin,
+  Send,
+  Menu,
+} from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import {
   Calendar,
@@ -37,9 +56,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
 
-
 export default function Component() {
-    const [draftContent, setDraftContent] = useState(`Dear Jakes,
+  const [draftContent, setDraftContent] = useState(`Dear Jakes,
 
         Thank you for your detailed response regarding Cloudflare caching and site optimization. I appreciate the information you've provided about your services at Milk Moon Studio, specializing in Design and Webflow Development.
         
@@ -56,7 +74,7 @@ export default function Component() {
         Thank you again for your help and for taking the time to respond to my inquiry.
         
         Best regards,
-        Alex`)
+        Alex`);
   const [selectedEmailIndex, setSelectedEmailIndex] = useState<number>(-1);
   const [isEmailOpen, setIsEmailOpen] = useState(false);
   const [unreadEmails, setUnreadEmails] = useState<number[]>(
@@ -66,13 +84,12 @@ export default function Component() {
   );
   const [activeTab, setActiveTab] = useState<string>("important");
   const [isComposeOpen, setIsComposeOpen] = useState(false); // For opening email compose modal
-
-
+  const [isHovered, setIsHovered] = useState(false);
 
   const clickCountRef = useRef(0); // Track the number of clicks
   const [openEmailId, setOpenEmailId] = useState(null); // To store the ID of the opened email
   const router = useRouter(); // Initialize useRouter from next/navigation
-
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const handleClick = () => {
     setIsComposeOpen(true); // Open compose section
@@ -89,7 +106,6 @@ export default function Component() {
       setUnreadEmails(unreadEmails.filter((id) => id !== emailId)); // Mark as read
     }
     handleEmailClick(index); // Call the function to handle email click
-
   };
 
   const handleEmailClick = (emailId: number) => {
@@ -99,14 +115,13 @@ export default function Component() {
     if (clickCountRef.current === 1) {
       setTimeout(() => {
         if (clickCountRef.current === 2) {
-        //   setOpenEmailId(emailId); // Open the email
+          //   setOpenEmailId(emailId); // Open the email
           router.push(`/main/${emailId}`); // Navigate to the email details page
         }
         clickCountRef.current = 0; // Reset click count after timeout
       }, 500); // Timeout in ms (adjust as needed)
     }
   };
-
 
   const filteredEmails = emails.filter(
     (email) => activeTab === "other" || email.badge?.toLowerCase() === activeTab
@@ -137,12 +152,12 @@ export default function Component() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col relative">
         {/* Top Navigation */}
-        <header className="border-b px-6 py-3">
-          <div className="flex items-center justify-between">
+        <header className="px-6 py-3">
+          <div className="flex items-center w-full">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="mr-4">
-                  <MoreVertical className="h-4 w-4" />
+                  <Menu className="h-6 w-6" />
                   <span className="sr-only">Menu</span>
                 </Button>
               </DropdownMenuTrigger>
@@ -153,57 +168,108 @@ export default function Component() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Tabs
-              defaultValue="important"
-              className="w-full"
-              onValueChange={(value) => setActiveTab(value)}
-            >
-              <TabsList className="gap-2 overflow-auto">
-                <TabsTrigger value="important" className="text-sm">
-                  Important{" "}
-                  <Badge variant="secondary" className="ml-2">
-                    4
-                  </Badge>
-                </TabsTrigger>
-                <TabsTrigger value="notifications" className="text-sm">
-                  Notifications
-                </TabsTrigger>
-                <TabsTrigger value="support" className="text-sm">
-                  Support
-                </TabsTrigger>
-                <TabsTrigger value="team" className="text-sm">
-                  Team Blocking{" "}
-                  <Badge variant="secondary" className="ml-2">
-                    1
-                  </Badge>
-                </TabsTrigger>
-                <TabsTrigger value="vc" className="text-sm">
-                  VC{" "}
-                  <Badge variant="secondary" className="ml-2">
-                    3
-                  </Badge>
-                </TabsTrigger>
-                <TabsTrigger value="applications" className="text-sm">
-                  Applications{" "}
-                  <Badge variant="secondary" className="ml-2">
-                    201
-                  </Badge>
-                </TabsTrigger>
-                <TabsTrigger value="other" className="text-sm">
-                  Other
-                </TabsTrigger>
-              </TabsList>
-              <div className="ml-auto flex items-center gap-2">
-                <Button variant="ghost" size="icon">
-                  <PenSquare className="h-4 w-4" />
-                  <span className="sr-only">Compose</span>
-                </Button>
-                <Button variant="ghost" size="icon">
-                  <Search className="h-4 w-4" />
-                  <span className="sr-only">Search</span>
+            <div className="flex-1 flex items-center">
+              <div
+                className={`flex-grow transition-all duration-300 ease-in-out ${
+                  isSearchExpanded ? "hidden" : ""
+                }`}
+              >
+                <Tabs
+                  defaultValue="important"
+                  onValueChange={(value) => setActiveTab(value)}
+                >
+                  <TabsList className="gap-2 overflow-auto">
+                    <TabsTrigger value="important" className="text-sm">
+                      Important{" "}
+                      <Badge variant="secondary" className="ml-2">
+                        4
+                      </Badge>
+                    </TabsTrigger>
+                    <TabsTrigger value="notifications" className="text-sm">
+                      Notifications
+                    </TabsTrigger>
+                    <TabsTrigger value="support" className="text-sm">
+                      Support
+                    </TabsTrigger>
+                    <TabsTrigger value="team" className="text-sm">
+                      Team Blocking{" "}
+                      <Badge variant="secondary" className="ml-2">
+                        1
+                      </Badge>
+                    </TabsTrigger>
+                    <TabsTrigger value="vc" className="text-sm">
+                      VC{" "}
+                      <Badge variant="secondary" className="ml-2">
+                        3
+                      </Badge>
+                    </TabsTrigger>
+                    <TabsTrigger value="applications" className="text-sm">
+                      Applications{" "}
+                      <Badge variant="secondary" className="ml-2">
+                        201
+                      </Badge>
+                    </TabsTrigger>
+                    <TabsTrigger value="other" className="text-sm">
+                      Other
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
+              
+              <div
+                className={`flex items-center gap-2 ${
+                  isSearchExpanded ? "w-full" : ""
+                }`}
+              >
+                {isSearchExpanded ? (
+                  <div className="flex w-full items-center transition-all duration-300 ease-in-out transform translate-y-0">
+                    <Input
+                      type="search"
+                      placeholder="Search..."
+                      className="flex-grow min-h-[30px]"
+                      autoFocus
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setIsSearchExpanded(false)}
+                      className="ml-2"
+                    >
+                      <X className="h-4 w-4" />
+                      <span className="sr-only">Close search</span>
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <Link href="/create" passHref>
+                    <Button variant="ghost" size="icon">
+                      <PenSquare className="h-6 w-6" />
+                      <span className="sr-only">Compose</span>
+                    </Button>
+                    </Link>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setIsSearchExpanded(true)}
+                    >
+                      <Search className="h-6 w-6" />
+                      <span className="sr-only">Search</span>
+                    </Button>
+                  </>
+                )}
+              </div>
+              <div className="flex items-center ml-4">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="bg-blue-500 h-8 w-8 rounded-full flex items-center justify-center text-white"
+                >
+                  <span className="sr-only">User Profile</span>
+                  {/* Initials as a placeholder */}
+                  <span className="font-semibold">U</span>
                 </Button>
               </div>
-            </Tabs>
+            </div>
           </div>
         </header>
 
@@ -271,7 +337,6 @@ export default function Component() {
             ))}
           </div>
         </ScrollArea>
-       
 
         {/* Bottom Navigation */}
         <div className="fixed bottom-0 left-0 right-0 flex items-center justify-between px-6 py-2 bg-background border-t sm:hidden">
@@ -282,14 +347,31 @@ export default function Component() {
         </div>
 
         {/* Compose Button */}
+        <div>hello</div>
 
-        <Link href="/main" passHref>
-          <div
-            onClick={handleClick}
-            className="fixed bottom-16 right-4 sm:bottom-4 sm:right-4 h-12 w-12 p-0 flex items-center justify-center rounded-full cursor-pointer"
-          >
-            <PenSquare className="h-6 w-6" />
-          </div>
+        <Link href="/create" passHref>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg transition-all duration-300 ease-in-out hover:scale-110"
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                >
+                  <PenSquare
+                    className={`h-6 w-6 transition-all duration-300 ${
+                      isHovered ? "rotate-90" : ""
+                    }`}
+                  />
+                  <span className="sr-only">Create new item</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="left" align="center">
+                <p>Create new item</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </Link>
       </div>
 
@@ -348,69 +430,74 @@ export default function Component() {
         //   </div>
         // </Card>
         <ScrollArea className="w-80 border-l">
-        <div className="p-4 space-y-6">
-          {/* Personal Info */}
-          <div className="flex flex-col items-center text-center">
-            <Avatar className="h-12 w-12 mb-2">
-              <AvatarImage src="/placeholder.svg" alt="AB" />
-              <AvatarFallback>AB</AvatarFallback>
-            </Avatar>
-            <h2 className="font-semibold">Alex Bass</h2>
-            <p className="text-sm text-muted-foreground mb-2">Austin</p>
-            <p className="text-xs text-muted-foreground mb-4">contact@efficient.app</p>
-            <div className="flex gap-2 mb-4">
-              <Button variant="outline" size="sm" className="w-full">
-                <Linkedin className="h-4 w-4 mr-2" />
-                LinkedIn
-              </Button>
-              <Button variant="outline" size="sm" className="w-full">
-                <Github className="h-4 w-4 mr-2" />
-                GitHub
-              </Button>
-            </div>
-            <Separator className="my-4" />
-            <p className="text-xs text-muted-foreground">
-              Founder & Product at efficient.app
-            </p>
-          </div>
-
-          {/* Summary Section */}
-          <div>
-            <h2 className="font-semibold mb-2">Email Summary</h2>
-            <ul className="space-y-1 text-sm text-muted-foreground">
-              <li>• Response regarding Cloudflare caching services</li>
-              <li>• Milk Moon Studio specializes in Design and Webflow Development</li>
-              <li>• Refers to existing resources and documentation</li>
-              <li>• Suggests Zaraz integration for performance</li>
-            </ul>
-          </div>
-
-          {/* Draft Reply */}
-          <div>
-            <h2 className="font-semibold mb-2">AI-Generated Draft</h2>
-            <Textarea 
-              value={draftContent}
-              onChange={(e) => setDraftContent(e.target.value)}
-              className="min-h-[200px] mb-4"
-            />
-            <div className="flex items-center justify-between">
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  <Paperclip className="h-4 w-4 mr-2" />
-                  Attach
+          <div className="p-4 space-y-6">
+            {/* Personal Info */}
+            <div className="flex flex-col items-center text-center">
+              <Avatar className="h-12 w-12 mb-2">
+                <AvatarImage src="/placeholder.svg" alt="AB" />
+                <AvatarFallback>AB</AvatarFallback>
+              </Avatar>
+              <h2 className="font-semibold">Alex Bass</h2>
+              <p className="text-sm text-muted-foreground mb-2">Austin</p>
+              <p className="text-xs text-muted-foreground mb-4">
+                contact@efficient.app
+              </p>
+              <div className="flex gap-2 mb-4">
+                <Button variant="outline" size="sm" className="w-full">
+                  <Linkedin className="h-4 w-4 mr-2" />
+                  LinkedIn
                 </Button>
-                <Button variant="outline" size="sm">
-                  Edit
+                <Button variant="outline" size="sm" className="w-full">
+                  <Github className="h-4 w-4 mr-2" />
+                  GitHub
                 </Button>
               </div>
-              <Button>
-                <Send className="h-4 w-4 mr-2" />
-                Send
-              </Button>
+              <Separator className="my-4" />
+              <p className="text-xs text-muted-foreground">
+                Founder & Product at efficient.app
+              </p>
+            </div>
+
+            {/* Summary Section */}
+            <div>
+              <h2 className="font-semibold mb-2">Email Summary</h2>
+              <ul className="space-y-1 text-sm text-muted-foreground">
+                <li>• Response regarding Cloudflare caching services</li>
+                <li>
+                  • Milk Moon Studio specializes in Design and Webflow
+                  Development
+                </li>
+                <li>• Refers to existing resources and documentation</li>
+                <li>• Suggests Zaraz integration for performance</li>
+              </ul>
+            </div>
+
+            {/* Draft Reply */}
+            <div>
+              <h2 className="font-semibold mb-2">AI-Generated Draft</h2>
+              <Textarea
+                value={draftContent}
+                onChange={(e) => setDraftContent(e.target.value)}
+                className="min-h-[200px] mb-4"
+              />
+              <div className="flex items-center justify-between">
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm">
+                    <Paperclip className="h-4 w-4 mr-2" />
+                    Attach
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    Edit
+                  </Button>
+                </div>
+                <Button>
+                  <Send className="h-4 w-4 mr-2" />
+                  Send
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      </ScrollArea>
+        </ScrollArea>
       )}
     </div>
   );
@@ -583,4 +670,3 @@ const emails = [
       "The client proposal looks good overall, but there are a few areas that need improvement before we send it off.",
   },
 ];
-

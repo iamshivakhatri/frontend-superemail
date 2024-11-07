@@ -1,283 +1,193 @@
-'use client'
-
-import { useEffect, useState } from "react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+"use client";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 import {
   Calendar,
-  MessageSquare,
+  Gift,
+  Github,
+  HelpCircle,
+  LineChart,
+  Loader2,
+  Mail,
+  MenuIcon,
   PenSquare,
   Search,
   Settings,
-  MoreVertical,
-  Mail,
-  FileText,
-  Twitter
-} from "lucide-react"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+  User2,
+  Users,
+  X,
+  Zap,
+} from "lucide-react";
 
 export default function Component() {
-  const [selectedEmailIndex, setSelectedEmailIndex] = useState<number>(-1)
-  const [isEmailOpen, setIsEmailOpen] = useState(false)
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowDown') {
-        e.preventDefault()
-        setSelectedEmailIndex(prev => 
-          prev < emails.length - 1 ? prev + 1 : prev
-        )
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault()
-        setSelectedEmailIndex(prev => 
-          prev > 0 ? prev - 1 : prev
-        )
-      } else if (e.key === ' ' && selectedEmailIndex !== -1) {
-        e.preventDefault()
-        setIsEmailOpen(!isEmailOpen)
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectedEmailIndex, isEmailOpen])
+  const [selectedCategory, setSelectedCategory] = useState("important");
+  const [showFooter, setShowFooter] = useState(true); // Toggle footer visibility based on page
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-white">
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Top Navigation */}
-        <header className="border-b px-6 py-3">
-          <div className="flex items-center">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="mr-4">
-                  <MoreVertical className="h-4 w-4" />
-                  <span className="sr-only">Menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Keyboard Shortcuts</DropdownMenuItem>
-                <DropdownMenuItem>Help & Feedback</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            
-            <Tabs defaultValue="important" className="w-full">
-              <TabsList className="gap-2">
-                <TabsTrigger value="important" className="text-sm">
-                  Important <Badge variant="secondary" className="ml-2">4</Badge>
-                </TabsTrigger>
-                <TabsTrigger value="notifications" className="text-sm">
-                  Notifications
-                </TabsTrigger>
-                <TabsTrigger value="support" className="text-sm">
-                  Support
-                </TabsTrigger>
-                <TabsTrigger value="team" className="text-sm">
-                  Team Blocking <Badge variant="secondary" className="ml-2">1</Badge>
-                </TabsTrigger>
-                <TabsTrigger value="vc" className="text-sm">
-                  VC <Badge variant="secondary" className="ml-2">3</Badge>
-                </TabsTrigger>
-                <TabsTrigger value="applications" className="text-sm">
-                  Applications <Badge variant="secondary" className="ml-2">201</Badge>
-                </TabsTrigger>
-                <TabsTrigger value="other" className="text-sm">
-                  Other
-                </TabsTrigger>
-              </TabsList>
-              <div className="ml-auto flex items-center gap-2">
-                <Button variant="ghost" size="icon">
-                  <PenSquare className="h-4 w-4" />
-                  <span className="sr-only">Compose</span>
-                </Button>
-                <Button variant="ghost" size="icon">
-                  <Search className="h-4 w-4" />
-                  <span className="sr-only">Search</span>
-                </Button>
-              </div>
-            </Tabs>
+        {/* Header */}
+        <header className="flex items-center px-4 h-14 border-b border-zinc-100">
+          <Button variant="ghost" size="icon" className="mr-2">
+            <MenuIcon className="h-5 w-5 text-zinc-500" />
+          </Button>
+          
+          <nav className="flex items-center space-x-6">
+            {/* Navigation buttons */}
+            <button
+              onClick={() => setSelectedCategory("important")}
+              className={cn(
+                "text-sm font-medium flex items-center",
+                selectedCategory === "important" 
+                  ? "text-zinc-900" 
+                  : "text-zinc-500 hover:text-zinc-900"
+              )}
+            >
+              Important
+              <span className="ml-1.5 text-xs text-zinc-500">925</span>
+            </button>
+            {/* ... other buttons */}
+          </nav>
+
+          <div className="ml-auto flex items-center space-x-2">
+            <div className="relative">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-zinc-500" />
+              <Input
+                placeholder="Search"
+                className="w-72 pl-8 h-9 bg-zinc-50 border-none text-sm"
+              />
+            </div>
+            <Button variant="ghost" className="h-8 px-3 text-sm font-medium">
+              <PenSquare className="h-4 w-4 mr-2" />
+              Compose
+            </Button>
           </div>
         </header>
 
         {/* Email List */}
         <ScrollArea className="flex-1">
-          <div className="divide-y">
-            {emails.map((email, index) => (
-              <div
-                key={email.id}
-                className={`flex items-center gap-4 px-6 py-3 hover:bg-muted/50 cursor-pointer group ${
-                  selectedEmailIndex === index ? 'bg-muted' : ''
-                }`}
-                onClick={() => {
-                  setSelectedEmailIndex(index)
-                  setIsEmailOpen(true)
-                }}
-                role="button"
-                tabIndex={0}
-                aria-selected={selectedEmailIndex === index}
-              >
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={email.avatar} alt={email.sender} />
-                  <AvatarFallback>{email.sender[0]}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">{email.sender}</span>
-                    {email.badge && (
-                      <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-                        {email.badge}
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="flex gap-2">
-                    <span className="font-medium text-sm truncate">{email.subject}</span>
-                    <span className="text-muted-foreground text-sm truncate">
-                      {email.preview}
+          {emails.map((email) => (
+            <div
+              key={email.id}
+              className="flex items-start px-4 py-3 border-b border-zinc-100 hover:bg-zinc-50"
+            >
+              {email.isImportant && (
+                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 mr-4" />
+              )}
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center min-w-0">
+                    <span className="text-sm font-medium text-zinc-900 truncate">
+                      {email.sender}
+                    </span>
+                    <span className="ml-2 text-xs text-zinc-500">
+                      {email.subject}
                     </span>
                   </div>
+                  <span className="ml-2 text-xs text-zinc-500 whitespace-nowrap">
+                    {email.date}
+                  </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">{email.date}</span>
-                  <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <Calendar className="h-4 w-4" />
-                      <span className="sr-only">Schedule</span>
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <MessageSquare className="h-4 w-4" />
-                      <span className="sr-only">Reply</span>
-                    </Button>
-                  </div>
-                </div>
+                <p className="text-xs text-zinc-500 truncate mt-0.5">
+                  {email.preview}
+                </p>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </ScrollArea>
       </div>
 
       {/* Right Sidebar */}
-      <Card className="w-80 border-l rounded-none p-6">
-        <div className="flex flex-col items-center text-center">
-          <Avatar className="h-20 w-20 mb-4">
-            <AvatarImage src="/placeholder.svg" alt="Alex Bass" />
-            <AvatarFallback>AB</AvatarFallback>
-          </Avatar>
-          <h2 className="font-semibold text-lg">Alex Bass</h2>
-          <p className="text-sm text-muted-foreground mb-2">alex@example.com</p>
-          <p className="text-sm text-muted-foreground">San Francisco</p>
-        </div>
+      <div className={cn("w-80 bg-zinc-50/50 flex flex-col relative", { "mb-12": showFooter })}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-2 top-2 h-8 w-8 text-zinc-400 hover:text-zinc-600"
+        >
+          <X className="h-4 w-4" />
+        </Button>
 
-        <div className="mt-6 space-y-4">
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium">Recent Opens</h3>
-            <div className="space-y-2">
-              {recentOpens.map((item, index) => (
-                <div key={index} className="text-sm">
-                  <p className="font-medium">{item.sender}</p>
-                  <p className="text-muted-foreground">{item.subject}</p>
-                  <p className="text-xs text-muted-foreground">{item.time}</p>
-                </div>
-              ))}
+        <div className="p-4 flex-1">
+          <h2 className="text-lg font-medium text-zinc-900">Selisha Thapa</h2>
+          <p className="text-sm text-zinc-500 mt-0.5">selishathapa7@gmail.com</p>
+          
+          <div className="mt-6 space-y-4">
+            <div className="flex items-center space-x-2 text-zinc-500">
+              <Mail className="h-4 w-4" />
+              <span className="text-sm">Mail</span>
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium">Quick Actions</h3>
-            <div className="flex flex-col gap-2">
-              <Button variant="outline" className="justify-start">
-                <Mail className="mr-2 h-4 w-4" />
-                Compose Email
-              </Button>
-              <Button variant="outline" className="justify-start">
-                <FileText className="mr-2 h-4 w-4" />
-                Create Document
-              </Button>
-              <Button variant="outline" className="justify-start">
-                <Twitter className="mr-2 h-4 w-4" />
-                Share on Twitter
-              </Button>
+            
+            <div className="space-y-2 pl-6">
+              <p className="text-sm text-zinc-600">Getting to Know Each Other</p>
+              <p className="text-sm text-zinc-600">Important</p>
             </div>
           </div>
         </div>
-      </Card>
+
+        <div className="p-4 border-t border-zinc-100">
+          <div className="flex items-center space-x-2 text-zinc-500 mb-4">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span className="text-sm">We'll let you know when it's ready!</span>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2 text-zinc-500">
+              <span className="text-sm">My Team</span>
+              <Users className="h-4 w-4" />
+            </div>
+            <div className="flex items-center space-x-4 text-zinc-400">
+              <Zap className="h-4 w-4" />
+              <Gift className="h-4 w-4" />
+              <HelpCircle className="h-4 w-4" />
+              <LineChart className="h-4 w-4" />
+              <Settings className="h-4 w-4" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer - Conditional */}
+      {showFooter && (
+        <div className="fixed bottom-0 left-0 right-0 px-4 py-2 border-t border-zinc-100 bg-white flex items-center justify-between text-xs text-zinc-500">
+          <div className="flex items-center space-x-4">
+            <span>Hit</span>
+            <kbd className="px-1.5 py-0.5 text-xs bg-zinc-100 rounded">E</kbd>
+            <span>to Mark Done</span>
+            {/* ... other commands */}
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-zinc-500 hover:text-zinc-900"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
     </div>
-  )
+  );
 }
 
 const emails = [
   {
     id: 1,
-    sender: "Alex Bass",
-    subject: "Superhuman Screen Recordings",
-    preview: "Hey Andra, We need to work on the screen recordings for the Superhuman...",
-    date: "33 mins ago",
-    avatar: "/placeholder.svg",
-    badge: "team"
+    sender: "shivaji",
+    subject: "Scheduled Email Test",
+    preview: "Hello, this is a test email scheduled via Postman.",
+    date: "NOV 3",
+    isImportant: false,
   },
   {
     id: 2,
-    sender: "Jonathan, Brett",
-    subject: "Superhuman launch communications - Invitation to edit",
-    preview: "jon@superhuman.com has invited...",
-    date: "MAY 13",
-    avatar: "/placeholder.svg"
+    sender: "Redis",
+    subject: "Get started with Redis Cloud",
+    preview: "Redis | The Real-Time Data Platform Redis Welcome to Redis Cloud You did it! Whether you're a first...",
+    date: "NOV 2",
+    isImportant: true,
   },
-  {
-    id: 3,
-    sender: "Noel, Jeanine, Conrad",
-    subject: "Superhuman announcement 🎯",
-    preview: "Hello team, this is an announcement email that talks about t...",
-    date: "MAY 13",
-    avatar: "/placeholder.svg"
-  },
-  {
-    id: 4,
-    sender: "Nicole Luvalle",
-    subject: "Updated Invitation: Recruiting Plan Summary",
-    preview: "This event has been changed. More details Rec...",
-    date: "MAY 13",
-    avatar: "/placeholder.svg"
-  },
-  {
-    id: 5,
-    sender: "Simone, Rachel",
-    subject: "Invitation: Recruiting Plan Summary Review",
-    preview: "You have been invited to the following event. Mo...",
-    date: "MAY 12",
-    avatar: "/placeholder.svg"
-  }
-]
-
-const recentOpens = [
-  {
-    sender: "Andriy Zapisotskyi",
-    subject: "Re: Connecting Andriy of Growthmate.io with Alex...",
-    time: "33 mins ago"
-  },
-  {
-    sender: "Siddharth Janghu",
-    subject: "Re: Akiflow Partnership <> Efficient App",
-    time: "46 mins ago"
-  },
-  {
-    sender: "Jasmine Jones",
-    subject: "Re: Introduction to 02/20 Dashlane Webinar",
-    time: "Yesterday"
-  },
-  {
-    sender: "Steve Holm",
-    subject: "Appreciating The Product-Focused Direction!",
-    time: "Yesterday"
-  }
-]
+  // ... other emails remain the same
+];
