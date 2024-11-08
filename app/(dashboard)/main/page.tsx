@@ -528,106 +528,118 @@ export default function Component() {
       {/* Right Sidebar (Email Content) */}
       {/* Right Sidebar (Email Content) */}
       {isEmailOpen &&
-        selectedEmailIndex !== -1 &&
-        (showSettings ? (
-          <div className="w-full max-w-2xl mx-auto bg-white min-h-screen transition-all duration-300"></div>
-        ) : (
-          <ScrollArea
-            className={`w-80 border-l ${
-              showSettings ? "mb-5" : ""
-            } transition-all duration-300`}
-          >
-            <div className="p-4 flex flex-col space-y-6  h-full justify-between">
-              {/* Personal Info */}
-              <div className="flex flex-col items-center text-center">
-                <Avatar className="h-12 w-12 mb-2">
-                  <AvatarImage src="/placeholder.svg" alt="AB" />
-                  <AvatarFallback>AB</AvatarFallback>
-                </Avatar>
-                <h2 className="font-semibold">Alex Bass</h2>
-                <p className="text-sm text-muted-foreground mb-2">Austin</p>
-                <p className="text-xs text-muted-foreground mb-4">
-                  contact@efficient.app
-                </p>
+  selectedEmailIndex !== -1 &&
+  (showSettings ? (
+    <div className="w-80 max-w-2xl mx-auto bg-white min-h-screen transition-all duration-300">
+      settings page.
+    </div>
+  ) : (
+    <div className="w-80 shadow-lg relative flex flex-col h-screen bg-white">
+      <ScrollArea className="flex-1 overflow-hidden">
+      {/* ${showFooter ? "mb-8" : ""} */}
+        <div className={`flex flex-col h-full `}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-2 top-2 h-8 w-8 text-zinc-400 hover:text-zinc-600"
+          />
 
-                <div className="flex gap-2 mb-4">
-                  <Button variant="outline" size="sm" className="w-full">
-                    <Linkedin className="h-4 w-4 mr-2" />
-                    LinkedIn
-                  </Button>
-                  <Button variant="outline" size="sm" className="w-full">
-                    <Github className="h-4 w-4 mr-2" />
-                    GitHub
-                  </Button>
-                </div>
+          <div className="p-4 flex-1 flex flex-col gap-6">
+            {/* Personal Info */}
+            <div className="flex flex-col items-center text-center">
+              <Avatar className="h-12 w-12 mb-2">
+                <AvatarImage src="/placeholder.svg" alt="AB" />
+                <AvatarFallback>AB</AvatarFallback>
+              </Avatar>
+              <h2 className="font-semibold">Alex Bass</h2>
+              <p className="text-sm text-muted-foreground mb-2">Austin</p>
+              <p className="text-xs text-muted-foreground mb-4">
+                contact@efficient.app
+              </p>
 
-                <Separator className="my-4" />
-                <p className="text-xs text-muted-foreground">
-                  Founder & Product at efficient.app
-                </p>
+              <div className="flex gap-2 mb-4 w-full">
+                <Button variant="outline" size="sm" className="flex-1">
+                  <Linkedin className="h-4 w-4 mr-2" />
+                  LinkedIn
+                </Button>
+                <Button variant="outline" size="sm" className="flex-1">
+                  <Github className="h-4 w-4 mr-2" />
+                  GitHub
+                </Button>
               </div>
 
-              {/* Summary Section */}
-              <div className="space-y-2">
-                <h2 className="font-semibold mb-2">Email Summary</h2>
-                <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li>• Response regarding Cloudflare caching services</li>
-                  <li>
-                    • Milk Moon Studio specializes in Design and Webflow
-                    Development
-                  </li>
-                  <li>• Refers to existing resources and documentation</li>
-                  <li>• Suggests Zaraz integration for performance</li>
-                </ul>
-              </div>
-
-              {/* Draft Reply */}
-              <div className="space-y-2">
-                <h2 className="font-semibold mb-2">AI-Generated Draft</h2>
-                <Textarea
-                  value={draftContent}
-                  onChange={(e) => setDraftContent(e.target.value)}
-                  className="min-h-[200px] mb-4"
-                />
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
-                      <Paperclip className="h-4 w-4 mr-2" />
-                      Attach
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      Edit
-                    </Button>
-                  </div>
-                  <Button>
-                    <Send className="h-4 w-4 mr-2" />
-                    Send
-                  </Button>
-                </div>
-              </div>
+              <Separator className="my-4 w-full" />
+              <p className="text-xs text-muted-foreground">
+                Founder & Product at efficient.app
+              </p>
             </div>
 
-            {/* Footer */}
-            <div className="p-4 border-t border-zinc-100 mt-6">
+            {/* Summary Section */}
+            <div className="space-y-2">
+              <h2 className="font-semibold mb-2">Email Summary</h2>
+              <ul className="space-y-1 text-sm text-muted-foreground">
+                <li>• Response regarding Cloudflare caching services</li>
+                <li>
+                  • Milk Moon Studio specializes in Design and Webflow Development
+                </li>
+                <li>• Refers to existing resources and documentation</li>
+                <li>• Suggests Zaraz integration for performance</li>
+              </ul>
+            </div>
+
+            {/* Draft Reply */}
+            <div className="space-y-2">
+              <h2 className="font-semibold mb-2">AI-Generated Draft</h2>
+              <Textarea
+                value={draftContent}
+                onChange={(e) => setDraftContent(e.target.value)}
+                className="min-h-[200px] mb-4"
+              />
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2 text-zinc-500">
-                  <span className="text-sm">My Team</span>
-                  <Users className="h-4 w-4" />
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm">
+                    <Paperclip className="h-4 w-4 mr-2" />
+                    Attach
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    Edit
+                  </Button>
                 </div>
-                <div className="flex items-center space-x-4 text-zinc-400">
-                  <Zap className="h-4 w-4" />
-                  <Gift className="h-4 w-4" />
-                  <HelpCircle className="h-4 w-4" />
-                  <LineChart className="h-4 w-4" />
-                  <Settings
-                    className="h-4 w-4 cursor-pointer"
-                    onClick={() => setShowSettings(!showSettings)}
-                  />
-                </div>
+                <Button>
+                  <Send className="h-4 w-4 mr-2" />
+                  Send
+                </Button>
               </div>
             </div>
-          </ScrollArea>
-        ))}
+          </div>
+        </div>
+      </ScrollArea>
+
+      {/* Footer */}
+      <div className={`border-t border-zinc-100 bg-white ${showFooter ? "mb-12" : ""}`}>
+        <div className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2 text-zinc-500">
+              <span className="text-sm">My Team</span>
+              <Users className="h-4 w-4" />
+            </div>
+            <div className="flex items-center space-x-4 text-zinc-400">
+              <Zap className="h-4 w-4" />
+              <Gift className="h-4 w-4" />
+              <HelpCircle className="h-4 w-4" />
+              <LineChart className="h-4 w-4" />
+              <Settings
+                className="h-4 w-4 cursor-pointer"
+                onClick={() => setShowSettings(!showSettings)}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  ))}
+
+
 
       {/* Footer - Conditional */}
       {showFooter && (
