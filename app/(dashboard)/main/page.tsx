@@ -436,17 +436,7 @@ export default function Component() {
                   </>
                 )}
               </div>
-              <div className="flex items-center ml-4">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="bg-blue-500 h-8 w-8 rounded-full flex items-center justify-center text-white"
-                >
-                  <span className="sr-only">User Profile</span>
-                  {/* Initials as a placeholder */}
-                  <span className="font-semibold">U</span>
-                </Button>
-              </div>
+            
             </div>
           </div>
         </header>
