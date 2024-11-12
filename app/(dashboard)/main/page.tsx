@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,19 +14,11 @@ import {
   ChevronRight,
   HelpCircle,
   LineChart,
-  Loader2,
-  MenuIcon,
-  User2,
   Users,
   Zap,
 } from "lucide-react";
 
 import {
-  ArrowLeft,
-  ArrowUp,
-  ArrowDown,
-  Share2,
-  Clock,
   Paperclip,
   Trash2,
   Github,
@@ -36,12 +27,6 @@ import {
   Menu,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 import {
   Calendar,
@@ -56,12 +41,7 @@ import {
   X,
   PlusCircle,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 
 import Link from "next/link";
 
