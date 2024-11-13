@@ -34,7 +34,6 @@ import {
   PenSquare,
   Search,
   Settings,
-  MoreVertical,
   Mail,
   FileText,
   Twitter,
