@@ -9,11 +9,9 @@ import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, Comma
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
-// import { toast } from "@/components/ui/use-toast"
 import { toast } from "react-hot-toast"
 import Link from "next/link"
 import { ScrollArea } from "@/components/ui/scroll-area"
-// import { ArrowLeft, ArrowUp, ArrowDown, Share2, MoreVertical, Clock, Paperclip, Trash2, Github, Linkedin, Send } from 'lucide-react'
 
 
 
