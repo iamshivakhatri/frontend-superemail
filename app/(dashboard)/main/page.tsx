@@ -38,7 +38,6 @@ import {
   FileText,
   Twitter,
   X,
-  PlusCircle,
 } from "lucide-react";
 
 
